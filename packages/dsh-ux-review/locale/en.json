@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "UX requirements review",
+    "description": "Choose “打开设计文档” (Open design document) from a new sidebar tab, then select or drop a local or received HTML file. Content identifies existing design documents; ordinary prototypes require explicit import. A uniquely named copy is saved in the session workspace and the original is retained. Review UX, edit PRD, annotate and save change history. “交给 AI 修改” submits selected feedback to the current model; verified changes update the current file by default, with an optional new version. Export a complete offline review HTML. Session filesystem permissions apply. Save before closing. Disabling the plugin retains documents but removes its editor and task tools. The editor uses Chinese labels. Compatible with DeepSeek Harness 0.2.2-rc.3."
+  }
+}

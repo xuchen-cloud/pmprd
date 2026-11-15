@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenTiny 扩展组件交互样张</title>
+<!-- MIT License
+
+Copyright (c) 2022 - present TinyVue Authors.
+Copyright (c) 2022 - present Huawei Cloud Computing Technologies Co., Ltd.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+ -->
+<style>
+:root {
+  --tv-base-color-brand: #191919;
+  --tv-base-color-brand-1: #f0f7ff;
+  --tv-base-color-brand-6: #1476ff;
+  --tv-base-color-common-1: #ffffff;
+  --tv-base-color-common-3: #f5f5f5;
+  --tv-base-color-common-4: #f0f0f0;
+  --tv-base-color-common-7: #c2c2c2;
+  --tv-base-color-common-8: #808080;
+  --tv-base-color-common-9: #595959;
+  --tv-base-color-common-11: #191919;
+  --tv-base-color-success-6: #5cb300;
+  --tv-base-color-success-14: #e6f2d5;
+  --tv-base-color-error-6: #f23030;
+  --tv-base-color-error-13: #fce3e1;
+  --tv-base-color-warn-2: #ffebd1;
+  --tv-base-color-warn-6: #ff8800;
+  --tv-color-success-bg: var(--tv-base-color-success-6);
+  --tv-color-success-bg-light: var(--tv-base-color-success-14);
+  --tv-color-error-bg: var(--tv-base-color-error-6);
+  --tv-color-error-bg-light: var(--tv-base-color-error-13);
+  --tv-color-warn-bg: var(--tv-base-color-warn-6);
+  --tv-color-warn-bg-light: var(--tv-base-color-warn-2);
+  --tv-color-act-primary-bg-hover: var(--tv-base-color-common-9);
+  --tv-color-text: var(--tv-base-color-common-11);
+  --tv-color-text-secondary: var(--tv-base-color-common-9);
+  --tv-color-text-weaken: var(--tv-base-color-common-8);
+  --tv-color-text-disabled: var(--tv-base-color-common-7);
+  --tv-color-text-link: var(--tv-base-color-brand-6);
+  --tv-color-bg: var(--tv-base-color-common-3);
+  --tv-color-bg-primary: var(--tv-base-color-brand);
+  --tv-color-bg-mask: rgba(0, 0, 0, 20%);
+  --tv-color-bg-disabled: var(--tv-base-color-common-4);
+  --tv-color-bg-active-control: var(--tv-base-color-brand-6);
+  --tv-color-bg-3: var(--tv-base-color-common-1);
+  --tv-color-border: var(--tv-base-color-common-7);
+  --tv-color-border-divider: var(--tv-base-color-common-4);
+  --tv-font-family: 'Helvetica', 'Arial', 'PingFangSC-Regular', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', 'Microsoft JhengHei';
+  --tv-font-size-sm: 12px;
+  --tv-font-size-md: 14px;
+  --tv-font-size-heading-xs: 16px;
+  --tv-font-size-heading-sm: 18px;
+  --tv-font-size-heading-md: 20px;
+  --tv-line-height-number: 1.5;
+  --tv-font-weight-bold: 600;
+  --tv-border-radius-sm: 4px;
+  --tv-border-radius-md: 6px;
+  --tv-border-radius-lg: 8px;
+  --tv-space-base: 4px;
+  --tv-space-xs: 2px;
+  --tv-space-sm: var(--tv-space-base);
+  --tv-space-md: calc(var(--tv-space-base) * 2);
+  --tv-space-lg: calc(var(--tv-space-base) * 3);
+  --tv-space-xl: calc(var(--tv-space-base) * 4);
+  --tv-space-xxl: calc(var(--tv-space-base) * 6);
+  --tv-space-xxxl: calc(var(--tv-space-base) * 8);
+  --tv-size-height-xs: 24px;
+  --tv-size-height-sm: 28px;
+  --tv-size-height-md: 32px;
+  --tv-size-height-lg: 40px;
+  --tv-size-height-xl: 48px;
+  --tv-shadow-4-down: 0 8px 24px 0 rgba(0, 0, 0, 0.16);
+  --tv-shadow-4-left: -8px 0 24px 0 rgba(0, 0, 0, 0.16);
+}
+/* Convenience aliases to the complete OpenTiny token system. Exact sources and MIT notice: references/sources.md. */
+:root {
+  --ux-primary:var(--tv-color-bg-primary); --ux-primary-hover:var(--tv-color-act-primary-bg-hover);
+  --ux-link:var(--tv-color-text-link); --ux-selected:var(--tv-color-bg-active-control); --ux-selected-bg:var(--tv-base-color-brand-1);
+  --ux-text:var(--tv-color-text); --ux-secondary:var(--tv-color-text-secondary); --ux-muted:var(--tv-color-text-weaken);
+  --ux-page:var(--tv-color-bg); --ux-surface:var(--tv-color-bg-3); --ux-border:var(--tv-color-border); --ux-divider:var(--tv-color-border-divider);
+  --ux-disabled-bg:var(--tv-color-bg-disabled); --ux-disabled-text:var(--tv-color-text-disabled);
+  --ux-success:var(--tv-color-success-bg); --ux-warning:var(--tv-color-warn-bg); --ux-error:var(--tv-color-error-bg);
+  --ux-success-bg:var(--tv-color-success-bg-light); --ux-warning-bg:var(--tv-color-warn-bg-light); --ux-error-bg:var(--tv-color-error-bg-light);
+  --ux-mask:var(--tv-color-bg-mask);
+  --ux-font:var(--tv-font-family),sans-serif;
+  --ux-font-sm:var(--tv-font-size-sm); --ux-font-md:var(--tv-font-size-md); --ux-title-card:var(--tv-font-size-heading-xs); --ux-title-page:var(--tv-font-size-heading-sm); --ux-title-dialog:var(--tv-font-size-heading-md);
+  --ux-line:var(--tv-line-height-number); --ux-weight:var(--tv-font-weight-bold);
+  --ux-radius:var(--tv-border-radius-md); --ux-radius-panel:var(--tv-border-radius-lg); --ux-radius-small:var(--tv-border-radius-sm);
+  --ux-control:var(--tv-size-height-md); --ux-control-sm:var(--tv-size-height-sm); --ux-control-lg:var(--tv-size-height-lg);
+  --ux-gap-1:var(--tv-space-sm); --ux-gap-2:var(--tv-space-md); --ux-gap-3:var(--tv-space-lg); --ux-gap-4:var(--tv-space-xl); --ux-gap-5:var(--tv-space-xxl); --ux-gap-6:var(--tv-space-xxxl);
+  --ux-shadow-panel:var(--tv-shadow-4-down);
+  --ux-shadow-drawer:var(--tv-shadow-4-left);
+  --ux-gap-xs:var(--tv-space-xs); --ux-control-xs:var(--tv-size-height-xs); --ux-control-xl:var(--tv-size-height-xl);
+  /* Prototype layout values, not upstream mandates. */
+  --ux-page-width:1200px; --ux-dialog-width:560px; --ux-drawer-width:880px; --ux-sender-height:48px;
+}
+
+*{box-sizing:border-box} [hidden]{display:none!important} html{color-scheme:light}
+body{margin:0;background:var(--ux-page);color:var(--ux-text);font:var(--ux-font-md)/var(--ux-line) var(--ux-font)}
+button,input,select,textarea{font:inherit} button{cursor:pointer} button:disabled{cursor:not-allowed}
+a{color:var(--ux-link)}
+/* Keyboard fallback for action controls. Input focus is its existing border, as in OpenTiny Input. */
+:where(a,button,summary,input[type=checkbox],input[type=radio],[tabindex]):focus-visible{outline:2px solid var(--ux-primary);outline-offset:3px}
+h1,h2,h3,p{margin:0} h1,h2,h3{font-weight:var(--ux-weight)} h1{font-size:var(--ux-title-page)} h2{font-size:var(--ux-title-card)} h3{font-size:14px}
+.ux-page{max-width:var(--ux-page-width);margin:auto;padding:32px 24px 96px}
+.ux-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.ux-between{justify-content:space-between}.ux-stack{display:grid;gap:16px}.ux-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.ux-section{padding:24px;background:var(--ux-surface);border-radius:var(--ux-radius-panel)}
+.ux-section>h2{margin-bottom:16px}.ux-muted{color:var(--ux-secondary)}.ux-hint{font-size:12px;color:var(--ux-muted);margin-top:6px}.ux-rule{border:0;border-top:1px solid var(--ux-divider);margin:24px 0}
+.ux-btn{min-width:96px;min-height:var(--ux-control);padding:4px 24px;border:1px solid var(--ux-secondary);border-radius:var(--ux-radius);background:var(--ux-surface);color:var(--ux-text);display:inline-flex;justify-content:center;align-items:center;gap:6px;white-space:nowrap}
+.ux-btn:hover:not(:disabled){border-color:var(--ux-border)}.ux-btn.primary{background:var(--ux-primary);border-color:var(--ux-primary);color:#fff}.ux-btn.primary:hover:not(:disabled){background:var(--ux-primary-hover);border-color:var(--ux-primary-hover)}
+.ux-btn.text{border-color:transparent;background:transparent;color:var(--ux-link);padding:4px 8px;min-width:0}.ux-btn.icon{min-width:32px;padding:4px}.ux-btn.danger{color:var(--ux-error);border-color:var(--ux-error)}
+.ux-btn:disabled{background:var(--ux-disabled-bg);border-color:#dbdbdb;color:var(--ux-disabled-text)}.ux-btn.text:disabled{background:transparent;border-color:transparent}.ux-btn.small{min-height:28px;min-width:72px;padding:2px 16px;font-size:12px}
+.ux-field{display:grid;gap:6px;align-content:start}.ux-field>label,.ux-label{font-weight:600}.ux-required{color:var(--ux-error)}
+.ux-input{width:100%;min-width:0;height:var(--ux-control);padding:0 12px;border:1px solid var(--ux-border);border-radius:var(--ux-radius);background:var(--ux-surface);color:var(--ux-text);outline:0}
+.ux-input:hover,.ux-input:focus{border-color:var(--ux-primary)}.ux-input::placeholder{color:var(--ux-muted)}textarea.ux-input{height:96px;padding:8px 12px;resize:vertical}
+.ux-input:disabled{color:var(--ux-disabled-text);background:var(--ux-disabled-bg);border-color:#dbdbdb}.ux-input[aria-invalid=true]{border-color:var(--ux-error)}.ux-error{color:var(--ux-error);font-size:12px}
+.ux-footer{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--ux-divider);padding:16px 24px;display:flex;align-items:center;justify-content:flex-end;gap:12px;z-index:10}
+.ux-review{font-size:12px;color:var(--ux-muted);margin-top:24px}.ux-review summary{cursor:pointer}.ux-review p{padding-top:8px}
+@media(max-width:767px){.ux-page{padding:20px 16px 110px}.ux-grid{grid-template-columns:1fr}.ux-section{padding:20px}.ux-footer{flex-wrap:wrap}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* module: choice */
+.ux-choice-group{border:0;margin:0;padding:0;min-width:0}.ux-choice-group legend{font-weight:600;margin-bottom:12px}.ux-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.ux-choice{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--ux-border);border-radius:6px;padding:16px;cursor:pointer}.ux-choice:has(input:checked){border-color:var(--ux-selected);background:var(--ux-selected-bg)}
+.ux-choice input{accent-color:var(--ux-selected);margin-top:4px}.ux-choice small{display:block;color:var(--ux-secondary);margin-top:4px}.ux-choice .selected-label{display:none;font-size:12px;color:var(--ux-link)}.ux-choice:has(input:checked) .selected-label{display:inline}
+input[type=checkbox],input[type=radio]{accent-color:var(--ux-selected)}
+.ux-switch{display:inline-flex;align-items:center;gap:8px}.ux-switch input{appearance:none;-webkit-appearance:none;width:40px;height:20px;flex:none;padding:0;border:0;background:var(--ux-border);border-radius:15px;position:relative;cursor:pointer;margin:0;outline:0}.ux-switch input:before{content:'';position:absolute;width:16px;height:16px;top:2px;left:2px;border-radius:50%;background:#fff}.ux-switch input:checked{background:var(--ux-selected)}.ux-switch input:checked:before{left:22px}
+.ux-switch.mini input{width:32px;height:16px}.ux-switch.mini input:before{width:12px;height:12px}.ux-switch.mini input:checked:before{left:18px}
+.ux-switch input:disabled{background:var(--tv-color-bg-disabled-control-unactive,#dbdbdb);cursor:not-allowed}.ux-switch input:disabled:checked{background:var(--tv-color-bg-disabled-control-active,#b3d6ff)}.ux-switch:has(input:disabled){color:var(--ux-disabled-text);cursor:not-allowed}.ux-switch input:focus-visible{outline:2px solid var(--ux-selected);outline-offset:1px}
+/* Native radio semantics, OpenTiny Radio 16px outer / 8px inner. Keyboard-only focus. */
+.ux-radio{appearance:none;-webkit-appearance:none;display:inline-grid;place-content:center;width:16px;height:16px;padding:0;margin:2px 0 0;flex:none;border:1px solid var(--ux-border,#c2c2c2);border-radius:50%;background:#fff;cursor:pointer;vertical-align:middle}.ux-radio:after{content:'';width:8px;height:8px;border-radius:50%;background:var(--ux-selected,#1476ff);transform:scale(0)}.ux-radio:checked{border-color:var(--ux-selected,#1476ff)}.ux-radio:checked:after{transform:scale(1)}.ux-radio:hover:not(:checked):not(:disabled){border-color:var(--ux-primary,#191919)}.ux-radio:disabled{cursor:not-allowed;background:#f0f0f0;border-color:#dbdbdb}.ux-radio:disabled:after{background:#dbdbdb}.ux-radio:disabled:checked{background:#fff}.ux-radio:focus-visible{outline:2px solid var(--ux-primary,#191919);outline-offset:3px}
+
+.ux-choice:focus-within{outline:none}.ux-choice .ux-radio:focus-visible{outline:2px solid var(--ux-primary);outline-offset:3px}
+
+@media(max-width:767px){.ux-choice-grid{grid-template-columns:1fr}}
+
+/* module: feedback */
+.ux-tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;background:var(--ux-page);font-size:12px}.ux-tag.success{background:var(--ux-success-bg)}.ux-tag.warning{background:var(--ux-warning-bg)}.ux-tag.error{background:var(--ux-error-bg)}
+.ux-alert{padding:12px 16px;background:var(--ux-selected-bg);border-radius:6px;color:var(--ux-text)}.ux-alert.error{background:var(--ux-error-bg)}.ux-alert.warning{background:var(--ux-warning-bg)}
+.ux-empty{text-align:center;padding:48px 20px;color:var(--ux-secondary);background:#fafafa;border-radius:6px}.ux-empty p{margin:8px 0 16px}
+.ux-skeleton{background:linear-gradient(100deg,#f0f0f0 25%,#fafafa 45%,#f0f0f0 65%);background-size:250% 100%;animation:ux-shimmer 1.5s infinite;border-radius:6px;min-height:20px}.ux-skeleton.hero{height:240px}.ux-skeleton.line{height:16px;margin:16px 0}
+@keyframes ux-shimmer{to{background-position:-200% 0}}
+.ux-toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);max-width:calc(100vw - 32px);background:var(--ux-primary);color:white;padding:10px 20px;border-radius:6px;box-shadow:var(--ux-shadow-panel);z-index:5000;pointer-events:none}
+.ux-popover{position:relative;display:inline-block}.ux-popover>summary{cursor:pointer;list-style:none}.ux-popover-panel{position:absolute;z-index:30;top:calc(100% + 8px);left:0;width:260px;max-width:calc(100vw - 32px);padding:12px 16px;border-radius:8px;background:#fff;box-shadow:0 2px 12px #00000029;color:var(--ux-secondary)}.ux-popover-panel h3{font-size:16px;color:var(--ux-text);margin-bottom:8px}.ux-notify{position:fixed;right:24px;top:64px;z-index:100;max-width:min(340px,calc(100vw - 32px));padding:16px;background:#fff;border-radius:8px;box-shadow:0 2px 12px #00000029}.ux-notify h3{font-size:16px;margin-bottom:8px}
+.ux-popover-panel.align-end{left:auto;right:0}
+
+/* module: table */
+.ux-table-wrap{overflow-x:auto}.ux-table{border-collapse:collapse;width:100%;text-align:left}.ux-table th{background:var(--ux-page);font-weight:600}.ux-table th,.ux-table td{padding:12px 16px;border-bottom:1px solid var(--ux-divider)}.ux-table tr:hover td{background:#fafafa}.ux-pagination{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:16px}
+@media(max-width:767px){.ux-table th,.ux-table td{padding:10px}}
+
+/* module: navigation */
+/* OpenTiny NavMenu / TreeMenu defaults. Mobile layout is a prototype adaptation. */
+.ux-topbar{height:48px;padding:0 16px;display:flex;align-items:center;gap:32px;background:#fff;box-shadow:0 1px 4px #00000014;position:relative;z-index:20}
+.ux-brand{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:600;white-space:nowrap;color:var(--ux-text);text-decoration:none}
+.ux-nav{display:flex;align-items:stretch;height:48px;gap:32px}.ux-nav a,.ux-nav button{position:relative;display:flex;align-items:center;height:48px;padding:0;border:0;background:transparent;color:var(--ux-text);text-decoration:none;font-size:14px;white-space:nowrap}
+.ux-nav [aria-current=page],.ux-nav a:hover,.ux-nav button:hover{font-weight:600}.ux-nav [aria-current=page]:after{content:'';height:2px;position:absolute;bottom:0;left:0;right:0;background:var(--ux-primary)}
+.ux-toolbar{margin-left:auto;display:flex;align-items:center;gap:16px}.ux-shell{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:calc(100dvh - 48px)}
+.ux-sidenav{width:220px;background:#fff;border-right:1px solid var(--ux-divider);padding-top:8px}.ux-sidenav a,.ux-sidenav button{position:relative;display:flex;align-items:center;gap:8px;height:32px;width:100%;margin:0 0 4px;padding:0 16px;border:0;border-radius:0;background:transparent;color:var(--ux-text);font-size:14px;line-height:32px;text-decoration:none;text-align:left;white-space:nowrap}
+.ux-sidenav a:hover,.ux-sidenav button:hover{background:#f5f5f5;font-weight:600}.ux-sidenav [aria-current=page]{background:#f5f5f5;font-weight:600}.ux-sidenav [aria-current=page]:before{content:'';position:absolute;left:0;top:0;bottom:0;border-left:2px solid #191919}.ux-sidenav [aria-disabled=true]{color:var(--ux-disabled-text);pointer-events:none}
+.ux-sidenav details summary{padding:4px 16px;cursor:pointer}.ux-sidenav details a{padding-left:32px}.ux-mobile-nav{display:none}
+.ux-breadcrumb{display:flex;align-items:center;gap:4px;font-size:14px;flex-wrap:wrap}.ux-breadcrumb a{color:var(--ux-text);text-decoration:none}.ux-breadcrumb [aria-current]{font-weight:600}.ux-breadcrumb .separator{color:#808080;width:16px;text-align:center;margin:0 4px}
+
+@media(max-width:767px){.ux-topbar{gap:16px}.ux-shell{grid-template-columns:minmax(0,1fr)}.ux-sidenav{display:none;width:220px}.ux-sidenav.is-open{display:block;position:fixed;top:48px;bottom:0;left:0;z-index:19;box-shadow:4px 0 16px #00000014}.ux-mobile-nav{display:inline-flex}.ux-nav{gap:16px}}
+
+/* module: selection */
+.ux-selection{display:grid;gap:16px}.ux-transfer{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:16px;align-items:center}.ux-transfer-panel{border:1px solid var(--ux-border);border-radius:6px;overflow:hidden}.ux-transfer-panel h3{padding:8px 16px;background:var(--ux-page)}.ux-transfer-list{padding:8px 0;min-height:160px;max-height:260px;overflow:auto}.ux-transfer-list label{display:flex;align-items:center;gap:8px;min-height:32px;padding:0 16px}.ux-transfer-list label:hover{background:var(--ux-page)}
+.ux-range{width:100%;accent-color:var(--ux-selected)}.ux-range::-webkit-slider-runnable-track{height:8px;border-radius:4px;background:#f5f5f5}.ux-range::-webkit-slider-thumb{appearance:none;width:24px;height:24px;margin-top:-8px;border:1px solid #dbdbdb;border-radius:50%;background:white}.ux-range{-webkit-appearance:none}.ux-range:disabled{opacity:.5}
+.ux-tag-input{display:flex;flex-wrap:wrap;gap:4px;min-height:32px;padding:4px 8px;border:1px solid var(--ux-border);border-radius:6px}.ux-tag-input input{flex:1;min-width:80px;border:0;outline:0}.ux-tag-input:has(input:focus){border-color:var(--ux-primary)}.ux-tag-input button{border:0;background:transparent}.ux-tree-select{border:1px solid var(--ux-border);border-radius:6px;padding:8px 12px}.ux-tree-select summary{cursor:pointer}.ux-tree-select label{display:block;padding:4px 16px}
+@media(max-width:520px){.ux-transfer{grid-template-columns:1fr}.ux-transfer .ux-stack{display:flex;justify-content:center}}
+
+/* module: display */
+.ux-collapse{border-top:1px solid var(--ux-divider)}.ux-collapse details{border-bottom:1px solid var(--ux-divider)}.ux-collapse summary{cursor:pointer;padding:12px 0}.ux-collapse details>div{padding:0 0 16px;color:var(--ux-secondary)}
+.ux-tree{padding:16px 0}.ux-tree summary{cursor:pointer;height:32px;padding-right:16px}.ux-tree details{margin-left:16px}.ux-tree>details{margin-left:0}.ux-tree label{display:flex;align-items:center;gap:8px;min-height:32px;padding:0 16px}.ux-tree label:hover{background:#f5f5f5}.ux-tree label:has(input:checked){color:#1476ff;font-weight:600}
+.ux-progress{width:100%;height:8px;border:0;border-radius:999px;overflow:hidden;background:#e6e6e6}.ux-progress::-webkit-progress-bar{background:#e6e6e6}.ux-progress::-webkit-progress-value{background:#5cb300}.ux-progress::-moz-progress-bar{background:#5cb300}
+.ux-statistic strong{display:block;font-size:32px;font-weight:500}.ux-badge{display:inline-flex;min-width:18px;height:18px;justify-content:center;align-items:center;padding:0 4px;border-radius:999px;background:var(--ux-error);color:white;font-size:12px}.ux-avatar{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--ux-page)}
+.ux-timeline{padding:0 0 0 8px;list-style:none}.ux-timeline li{position:relative;padding:0 0 24px 24px;border-left:1px solid #dbdbdb}.ux-timeline li:before{content:'';position:absolute;left:-5px;top:5px;width:9px;height:9px;border-radius:50%;background:#191919}.ux-timeline li:last-child{border-color:transparent}.ux-timeline time{display:block;color:var(--ux-muted);font-size:12px}
+.ux-card{padding:24px;border:1px solid var(--ux-divider);border-radius:4px;background:#fafafa}.ux-card h3{font-size:16px;margin-bottom:16px}.ux-calendar{border-collapse:collapse;width:100%;text-align:center}.ux-calendar th,.ux-calendar td{padding:8px;border-bottom:1px solid var(--ux-divider)}.ux-calendar button{width:32px;height:32px;border:0;border-radius:6px;background:transparent}.ux-calendar [aria-pressed=true]{background:#191919;color:white}
+
+/* module: steps */
+/* OpenTiny Steps: line=true, size=medium. Base-variable resolution is required. */
+.ux-steps-scroll{overflow-x:auto;padding:0 0 4px}
+.ux-steps{--ux-step-size:32px;--ux-step-font:14px;display:flex;align-items:center;list-style:none;padding:0;margin:0;min-width:304px;max-width:800px;color:var(--ux-text,#191919)}
+.ux-steps li{position:relative;display:flex;align-items:center;flex:1;min-width:0;max-width:320px;min-height:40px;margin-right:8px;gap:8px;font-size:var(--ux-step-font);font-weight:500}.ux-steps li:last-child{flex:0 0 auto;margin-right:0}
+.ux-steps .node{display:inline-flex;align-items:center;justify-content:center;flex:none;width:var(--ux-step-size);height:var(--ux-step-size);border:1px solid #dbdbdb;border-radius:50%;background:#fff;color:#191919;font-size:var(--ux-step-font);line-height:1}.ux-steps .node svg{width:16px;height:16px;display:block}.ux-steps .step-label{white-space:nowrap}
+.ux-steps li:not(:last-child):after{content:'';flex:1;min-width:16px;border-top:1px solid #f0f0f0}.ux-steps li.done:after{border-top-color:#191919}.ux-steps .done .node{background:#f5f5f5;border-color:#191919;color:#191919}.ux-steps [aria-current=step] .node{background:#191919;border-color:#191919;color:#fff}
+.ux-steps .error .node{color:var(--ux-error,#f23030);background:#fff;border-color:var(--ux-error,#f23030)}.ux-steps .error .step-label{color:var(--ux-error,#f23030)}.ux-steps .disabled .node{background:#f0f0f0;border-color:#dbdbdb;color:#c2c2c2}.ux-steps .disabled .step-label{color:#c2c2c2}
+@media(max-width:767px){.ux-steps{--ux-step-size:24px;--ux-step-font:12px}.ux-steps .node svg{width:12px;height:12px}}
+
+/* module: layout */
+/* Container patterns: native equivalents of official computed region styles. Defaults 60/200/60; configure to match embedded NavMenu/TreeMenu. */
+.ux-container{--ux-header-height:60px;--ux-aside-width:200px;--ux-footer-height:60px;position:relative;display:grid;grid-template-columns:var(--ux-aside-width) minmax(0,1fr);grid-template-rows:var(--ux-header-height) minmax(0,1fr);grid-template-areas:"header header" "aside main";height:100dvh;min-height:0;overflow:hidden}
+.ux-container-header{grid-area:header;min-width:0}.ux-container-aside{grid-area:aside;min-height:0;overflow:auto}.ux-container-main{grid-area:main;min-width:0;min-height:0;overflow:auto}.ux-container-footer{grid-area:footer;min-width:0}
+.ux-container[data-pattern=default]>.ux-container-footer,.ux-container[data-pattern=fashion]>.ux-container-footer,.ux-container[data-pattern=simple]>.ux-container-header,.ux-container[data-pattern=simple]>.ux-container-footer,.ux-container[data-pattern=classic]>.ux-container-aside{display:none}
+.ux-container[data-pattern=classic]{grid-template-columns:minmax(0,1fr);grid-template-rows:var(--ux-header-height) minmax(0,1fr) var(--ux-footer-height);grid-template-areas:"header" "main" "footer"}.ux-container[data-pattern=legend]{grid-template-rows:var(--ux-header-height) minmax(0,1fr) var(--ux-footer-height);grid-template-areas:"header header" "aside main" "aside footer"}.ux-container[data-pattern=fashion]{grid-template-areas:"aside header" "aside main"}.ux-container[data-pattern=simple]{grid-template-rows:minmax(0,1fr);grid-template-areas:"aside main"}
+/* Layout + Row + Col: 12/24 columns, explicit gutter, official breakpoints. */
+.ux-layout{--ux-cols:12;min-width:0}.ux-layout[data-cols="24"]{--ux-cols:24}.ux-layout-row{display:grid;grid-template-columns:repeat(var(--ux-cols,12),minmax(0,1fr));column-gap:var(--ux-gutter,20px);row-gap:var(--ux-row-gap,16px);align-items:start}.ux-col{min-width:0;grid-column:span var(--xs,var(--span,12))}
+@media(min-width:768px){.ux-col{grid-column:span var(--sm,var(--span,12))}}@media(min-width:992px){.ux-col{grid-column:span var(--md,var(--span,12))}}@media(min-width:1200px){.ux-col{grid-column:span var(--lg,var(--span,12))}}@media(min-width:1920px){.ux-col{grid-column:span var(--xl,var(--span,12))}}
+
+
+</style>
+</head>
+<body>
+<section style="padding:24px;max-width:1200px;margin:24px auto"><h1 style="margin-bottom:16px">页面版型</h1><!-- Container default + NavMenu 48px + TreeMenu 220px. Rename IDs when merging; use navigation.html for the page-switch behavior. -->
+<div class="ux-container" data-pattern="default" style="--ux-header-height:48px;--ux-aside-width:220px;height:480px">
+<header class="ux-container-header ux-topbar"><span class="ux-brand">管理中心</span><nav class="ux-nav" aria-label="全局导航"><a href="#container-content" aria-current="page">工作空间</a></nav></header>
+<nav class="ux-container-aside ux-sidenav" aria-label="侧边导航"><a href="#container-content" aria-current="page">概览</a></nav>
+<main class="ux-container-main ux-layout" id="container-content" style="padding:24px"><h1>概览</h1><div class="ux-layout-row" style="--ux-gutter:24px;margin-top:24px"><section class="ux-section ux-col" style="--span:6;--xs:12;--sm:6"><h2>近期任务</h2><p>设计评审</p></section><section class="ux-section ux-col" style="--span:6;--xs:12;--sm:6"><h2>工作提醒</h2><p>整理评审反馈</p></section></div></main>
+</div>
+</section>
+<section style="padding:24px;max-width:1200px;margin:24px auto"><h1 style="margin-bottom:16px">导航</h1><!-- A shell example, not a mandatory layout. Rename IDs when combining copies. -->
+<header class="ux-topbar"><button type="button" class="ux-btn icon ux-mobile-nav" id="nav-toggle" aria-label="打开导航" aria-expanded="false" aria-controls="side-nav">☰</button><a class="ux-brand" href="#overview">管理中心</a><nav class="ux-nav" aria-label="全局导航"><a href="#overview" aria-current="page">工作空间</a></nav></header>
+<div class="ux-shell"><nav id="side-nav" class="ux-sidenav" aria-label="工作空间导航"><a href="#overview" aria-current="page">概览</a><a href="#members">成员</a><details><summary>设置</summary><a href="#settings">通知设置</a></details></nav><main class="ux-page" style="margin:0;width:100%"><nav class="ux-breadcrumb" aria-label="面包屑"><span>工作空间</span><span class="separator" aria-hidden="true">/</span><span id="nav-crumb" aria-current="page">概览</span></nav><section id="overview"><h1>概览</h1><p>工作空间概况</p></section><section id="members" hidden><h1>成员</h1><p>张敏 · 管理员</p></section><section id="settings" hidden><h1>通知设置</h1><label class="ux-switch"><input type="checkbox" checked>接收任务通知</label></section></main></div>
+<script>(()=>{
+const nav=document.querySelector('#side-nav'),toggle=document.querySelector('#nav-toggle');
+const close=()=>{nav.classList.remove('is-open');toggle.setAttribute('aria-expanded','false')};
+const select=hash=>{
+ const link=[...nav.querySelectorAll('a')].find(a=>a.hash===hash);if(!link)return;
+ nav.querySelectorAll('a').forEach(a=>{if(a===link)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
+ ['overview','members','settings'].forEach(id=>document.getElementById(id).hidden='#'+id!==hash);
+ document.querySelector('#nav-crumb').textContent=link.textContent;close();
+};
+toggle.onclick=()=>{const open=nav.classList.toggle('is-open');toggle.setAttribute('aria-expanded',String(open))};
+for(const root of [nav,document.querySelector('.ux-topbar')])root.addEventListener('click',e=>{const a=e.target.closest('a');if(!a)return;e.preventDefault();select(a.hash)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&nav.classList.contains('is-open')){close();toggle.focus()}});
+})();</script>
+</section>
+<section style="padding:24px;max-width:1200px;margin:24px auto"><h1 style="margin-bottom:16px">步骤与进度</h1><!-- OpenTiny horizontal line steps, current index 1. Read-only progress indicator; only make nodes buttons if the requested flow supports jumping. Change names and states for the task. -->
+<div class="ux-steps-scroll"><ol class="ux-steps" aria-label="商品发布进度"><li class="done"><span class="node" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="m5 12 4.5 4.5L19 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="step-label">基本信息<span class="sr-only">，已完成</span></span></li><li aria-current="step"><span class="node" aria-hidden="true">2</span><span class="step-label">商品详情<span class="sr-only">，当前步骤</span></span></li><li><span class="node" aria-hidden="true">3</span><span class="step-label">规格与定价<span class="sr-only">，待完成</span></span></li></ol></div>
+</section>
+<section style="padding:24px;max-width:1200px;margin:24px auto"><h1 style="margin-bottom:16px">栅格与间距</h1><!-- Layout cols=12, Row gutter=24, Col span=6 xs=12 sm=6. Do not copy demo colors as theme rules. -->
+<main class="ux-page ux-layout ux-stack"><nav class="ux-breadcrumb" aria-label="面包屑"><span>工作空间</span><span class="separator" aria-hidden="true">/</span><span aria-current="page">设置</span></nav><h1>工作空间设置</h1><section class="ux-section"><h2>基本信息</h2><div class="ux-layout-row" style="--ux-gutter:24px"><label class="ux-field ux-col" style="--span:6;--xs:12;--sm:6">工作空间名称<input class="ux-input" value="产品协作"></label><label class="ux-field ux-col" style="--span:6;--xs:12;--sm:6">所属团队<select class="ux-input"><option>产品团队</option><option>设计团队</option></select></label></div><hr class="ux-rule"><p class="ux-muted">设置仅对当前工作空间生效。</p></section></main>
+</section>
+<section style="padding:24px;max-width:1200px;margin:24px auto"><h1 style="margin-bottom:16px">选择与穿梭</h1><!-- Native fallbacks: select/datalist popup appearance follows the browser. For exact popup styling read the corresponding upstream theme. -->
+<section class="ux-selection ux-section"><h2>人员与范围</h2><div class="ux-grid"><label class="ux-field">业务区域<select class="ux-input" id="sel-region"><option>华东</option><option>华南</option></select></label><label class="ux-field">城市<select class="ux-input" id="sel-city"></select></label><label class="ux-field">搜索成员<input class="ux-input" list="sel-people" placeholder="输入姓名"><datalist id="sel-people"><option value="张敏"><option value="李阳"><option value="陈佳"></datalist></label><label class="ux-field">完成比例 <output id="sel-percent">50%</output><input class="ux-range" id="sel-range" type="range" min="0" max="100" value="50"></label></div>
+<details class="ux-tree-select"><summary>选择所属组织</summary><label><input type="radio" name="sel-org" value="product"> 产品部</label><label><input type="radio" name="sel-org" value="design"> 设计部</label></details>
+<div class="ux-transfer"><section class="ux-transfer-panel"><h3>可选成员</h3><div class="ux-transfer-list" id="sel-left"><label><input type="checkbox" value="张敏">张敏</label><label><input type="checkbox" value="李阳">李阳</label><label><input type="checkbox" value="陈佳">陈佳</label></div></section><div class="ux-stack"><button type="button" class="ux-btn" id="sel-add" disabled>添加 →</button><button type="button" class="ux-btn" id="sel-remove" disabled>← 移除</button></div><section class="ux-transfer-panel"><h3>已选成员</h3><div class="ux-transfer-list" id="sel-right"></div></section></div><p id="sel-count" role="status">已选择 0 人</p></section>
+<script>(()=>{const q=s=>document.querySelector(s),cities={'华东':['上海','杭州'],'华南':['广州','深圳']};const updateCity=()=>q('#sel-city').replaceChildren(...cities[q('#sel-region').value].map(x=>new Option(x,x)));q('#sel-region').onchange=updateCity;updateCity();q('#sel-range').oninput=e=>q('#sel-percent').textContent=e.target.value+'%';const sync=()=>{q('#sel-add').disabled=!q('#sel-left input:checked');q('#sel-remove').disabled=!q('#sel-right input:checked');q('#sel-count').textContent='已选择 '+q('#sel-right').children.length+' 人'};for(const [button,from,to] of [['sel-add','sel-left','sel-right'],['sel-remove','sel-right','sel-left']]){q('#'+button).onclick=()=>{q('#'+from).querySelectorAll('input:checked').forEach(input=>{input.checked=false;q('#'+to).append(input.parentElement)});sync()};q('#'+from).onchange=sync}})();</script>
+</section>
+<section style="padding:24px;max-width:1200px;margin:24px auto"><h1 style="margin-bottom:16px">表格与批量操作</h1><section class="ux-section ux-stack"><h2>任务列表</h2><div class="ux-row"><label>搜索 <input id="table-search" class="ux-input" placeholder="输入任务名称"></label><button type="button" class="ux-btn" id="table-complete" disabled>批量完成</button><span id="table-count" role="status">已选择 0 项</span></div><div class="ux-table-wrap"><table class="ux-table"><thead><tr><th><input id="table-all" type="checkbox" aria-label="选择本页全部"></th><th aria-sort="none" id="table-name-head"><button type="button" class="ux-btn text" id="table-sort">任务名称 ↕</button></th><th>状态</th><th>负责人</th></tr></thead><tbody id="table-rows"></tbody></table></div><p class="ux-empty" id="table-empty" hidden>没有匹配任务，请调整搜索词。</p></section>
+<script>(()=>{const q=s=>document.querySelector(s),rows=[{id:1,name:'需求评审',state:'待处理',owner:'张敏'},{id:2,name:'原型设计',state:'进行中',owner:'李阳'},{id:3,name:'可用性验证',state:'待处理',owner:'陈佳'}],selected=new Set();let direction=1,sort=false;const visible=()=>rows.filter(r=>r.name.includes(q('#table-search').value.trim())).sort((a,b)=>sort?direction*a.name.localeCompare(b.name,'zh-CN'):a.id-b.id);const sync=()=>{const list=visible();q('#table-complete').disabled=!selected.size;q('#table-count').textContent='已选择 '+selected.size+' 项';q('#table-all').checked=list.length>0&&list.every(r=>selected.has(r.id));q('#table-all').indeterminate=list.some(r=>selected.has(r.id))&&!q('#table-all').checked};const render=()=>{q('#table-rows').replaceChildren(...visible().map(r=>{const tr=document.createElement('tr'),td=document.createElement('td'),input=document.createElement('input');input.type='checkbox';input.checked=selected.has(r.id);input.setAttribute('aria-label','选择 '+r.name);input.onchange=()=>{input.checked?selected.add(r.id):selected.delete(r.id);sync()};td.append(input);tr.append(td);for(const value of [r.name,r.state,r.owner]){const cell=document.createElement('td');cell.textContent=value;tr.append(cell)}return tr}));q('#table-empty').hidden=visible().length>0;sync()};q('#table-search').oninput=()=>{selected.clear();render()};q('#table-sort').onclick=()=>{direction=sort?-direction:1;sort=true;q('#table-name-head').setAttribute('aria-sort',direction===1?'ascending':'descending');render()};q('#table-all').onchange=e=>{visible().forEach(r=>e.target.checked?selected.add(r.id):selected.delete(r.id));render()};q('#table-complete').onclick=()=>{rows.filter(r=>selected.has(r.id)).forEach(r=>r.state='已完成');selected.clear();render()};render()})();</script>
+</section>
+<section style="padding:24px;max-width:1200px;margin:24px auto"><h1 style="margin-bottom:16px">数据展示</h1><section class="ux-section ux-stack"><h2>项目进展</h2><div class="ux-row"><div class="ux-statistic"><span class="ux-muted">待处理任务</span><strong>12</strong></div><span class="ux-badge" aria-label="3 条新消息">3</span><span class="ux-avatar" aria-label="张敏">敏</span></div><label>交付进度 60% <progress class="ux-progress" max="100" value="60">60%</progress></label><div class="ux-collapse"><details open><summary>阶段说明</summary><div>当前进入设计评审，下一步开展可用性验证。</div></details><details><summary>参与成员</summary><div>张敏 · 李阳 · 陈佳</div></details></div><div class="ux-tree" aria-label="选择任务范围"><details open><summary>设计阶段</summary><label><input type="checkbox">需求梳理</label><label><input type="checkbox">原型设计</label><details><summary>评审材料</summary><label><input type="checkbox">交互说明</label></details></details></div><ol class="ux-timeline"><li><strong>需求确认</strong><time>11 月 1 日</time></li><li><strong>设计评审</strong><time>11 月 3 日</time></li></ol></section>
+</section>
+<section style="padding:24px;max-width:1200px;margin:24px auto"><h1 style="margin-bottom:16px">反馈与确认</h1><section class="ux-section ux-stack"><h2>状态与确认</h2><p class="ux-alert" role="status">草稿已保存，可继续编辑。</p><div id="feedback-item" class="ux-row ux-between"><span>待移除的附件</span><details class="ux-popover" id="feedback-confirm"><summary class="ux-btn">移除</summary><div class="ux-popover-panel align-end"><h3>移除附件？</h3><p>从当前草稿中移除此附件。</p><div class="ux-row"><button type="button" class="ux-btn small" id="feedback-cancel">取消</button><button type="button" class="ux-btn small primary" id="feedback-remove">移除</button></div></div></details></div><button type="button" class="ux-btn" id="feedback-notify">查看处理结果</button><aside class="ux-notify" id="feedback-result" role="status" hidden><div class="ux-row ux-between"><h3>处理完成</h3><button type="button" class="ux-btn text icon" id="feedback-close" aria-label="关闭通知">×</button></div><p>变更已保存到当前草稿。</p></aside></section>
+<script>(()=>{const q=s=>document.querySelector(s);q('#feedback-cancel').onclick=()=>q('#feedback-confirm').open=false;q('#feedback-remove').onclick=()=>{q('#feedback-item').hidden=true;UX.toast('附件已移除')};q('#feedback-notify').onclick=()=>q('#feedback-result').hidden=false;q('#feedback-close').onclick=()=>q('#feedback-result').hidden=true;document.addEventListener('keydown',e=>{if(e.key==='Escape'&&q('#feedback-confirm').open){q('#feedback-confirm').open=false;q('#feedback-confirm summary').focus()}});document.addEventListener('click',e=>{if(!q('#feedback-confirm').contains(e.target))q('#feedback-confirm').open=false})})();</script>
+</section>
+<script>
+/* Optional tiny helpers. No network requests or persistence. */
+window.UX = (() => {
+  const dialogOrigins = new WeakMap();
+  const dialogStack = [];
+  let savedOverflow, scrollLocked = false;
+  let toastTimer;
+  const q = (s, root = document) => root.querySelector(s);
+  const topModal = () => [...dialogStack].reverse().find(dialog => dialog.open && dialog.matches(':modal')) || [...document.querySelectorAll('dialog:modal')].at(-1);
+  function register(dialog) {
+    const index = dialogStack.indexOf(dialog);
+    if (index >= 0) dialogStack.splice(index, 1);
+    dialogStack.push(dialog);
+  }
+  function toast(message) {
+    let el = document.getElementById('ux-toast');
+    if (!el) { el = document.createElement('div'); el.id = 'ux-toast'; el.className = 'ux-toast'; el.setAttribute('role', 'status'); document.body.append(el); }
+    // Native modal dialogs live in the top layer, so place feedback inside the active dialog.
+    const modal = topModal();
+    (modal || document.body).append(el);
+    el.textContent = message; el.hidden = false;
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => { el.hidden = true; }, 2800);
+  }
+  function open(dialog, focusSelector) {
+    if (dialog.open) return;
+    dialogOrigins.set(dialog, document.activeElement);
+    dialog.showModal(); register(dialog);
+    if (!scrollLocked) { savedOverflow = document.documentElement.style.overflow; scrollLocked = true; }
+    document.documentElement.style.overflow = 'hidden';
+    if (focusSelector) q(focusSelector, dialog)?.focus();
+  }
+  function close(dialog) { dialog.close(); }
+  // Native showModal order, rather than document order, determines the top layer.
+  document.addEventListener('beforetoggle', event => {
+    if (event.target instanceof HTMLDialogElement && event.newState === 'open') register(event.target);
+  }, true);
+  document.addEventListener('close', event => {
+    const dialog = event.target;
+    if (!(dialog instanceof HTMLDialogElement)) return;
+    const index = dialogStack.indexOf(dialog);
+    if (index >= 0) dialogStack.splice(index, 1);
+    const modal = topModal();
+    if (!modal && scrollLocked) { document.documentElement.style.overflow = savedOverflow; scrollLocked = false; }
+    const origin = dialogOrigins.get(dialog);
+    if (origin?.isConnected && (!modal || modal.contains(origin))) origin.focus();
+  }, true);
+  document.addEventListener('click', event => {
+    const btn = event.target.closest('[data-close]');
+    if (btn) btn.closest('dialog')?.close();
+  });
+  // Keep keyboard navigation explicitly within the topmost modal.
+  document.addEventListener('keydown', event => {
+    if (event.key !== 'Tab') return;
+    const modal = topModal();
+    if (!modal) return;
+    const items = [...modal.querySelectorAll('button, input:not([type=hidden]), select, textarea, a[href], summary, [contenteditable=true], [tabindex]')].filter(el => el.tabIndex >= 0 && !el.matches(':disabled') && !el.closest('[inert]') && el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden').sort((a,b) => (a.tabIndex || Infinity) - (b.tabIndex || Infinity));
+    const first = items[0], last = items.at(-1);
+    if (!first) { event.preventDefault(); modal.focus(); return; }
+    if (!modal.contains(document.activeElement)) { event.preventDefault(); (event.shiftKey ? last : first).focus(); }
+    else if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+  });
+  const escapeHTML = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function job() {
+    let timer, revision = 0;
+    return {
+      cancel() { revision++; clearTimeout(timer); },
+      run(callback, delay = 1600) { this.cancel(); const id = revision; timer = setTimeout(() => { if (revision === id) callback(); }, delay); }
+    };
+  }
+  return {q, toast, open, close, escapeHTML, job};
+})();
+
+
+</script>
+</body>
+</html>

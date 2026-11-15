@@ -1,0 +1,9 @@
+{
+  "name": "pmprd",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "release:pack": "node scripts/package-release.mjs"
+  }
+}

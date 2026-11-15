@@ -1,0 +1,6 @@
+interface:
+  display_name: "UX 原型协作"
+  short_description: "生成带 PRD、交互说明与修改意见的单文件原型，按人工反馈持续迭代并保留历史"
+  default_prompt: "使用 $ux-prototype，根据我的需求或已有标注修改单文件 HTML 原型，保留 PRD、交互说明与变更记录。"
+policy:
+  allow_implicit_invocation: true

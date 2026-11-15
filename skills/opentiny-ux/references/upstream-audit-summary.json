@@ -1,0 +1,43 @@
+{
+  "source_commit": "3f47a37f309163c943eb313b8a86c4d96a7fff00",
+  "date": "2026-11-04",
+  "counts": {
+    "opentiny-next-app-integration": {
+      "omit_out_of_scope": 23
+    },
+    "tiny-robot-skill": {
+      "retained_exact": 155
+    },
+    "tiny-vue-skill": {
+      "retained_exact": 4044
+    },
+    "webmcp-cli-skill": {
+      "omit_out_of_scope": 9
+    },
+    "webmcp-sdk-skill": {
+      "omit_out_of_scope": 26
+    }
+  },
+  "total_files": 4257,
+  "newly_retained": [
+    "tiny-vue-skill/.claude-plugin/plugin.json",
+    "tiny-vue-skill/SKILL.md",
+    "tiny-vue-skill/rules/component-use.md",
+    "tiny-vue-skill/rules/project-setting.md",
+    "tiny-robot-skill/.claude-plugin/plugin.json",
+    "tiny-robot-skill/SKILL.md",
+    "tiny-robot-skill/migration/bubble-migration.md",
+    "tiny-robot-skill/migration/use-conversation-migration.md",
+    "tiny-robot-skill/migration/use-message-migration.md",
+    "tiny-robot-skill/rules/code-generation.md",
+    "tiny-robot-skill/rules/component-use.md",
+    "tiny-robot-skill/rules/kit-use.md",
+    "tiny-robot-skill/rules/project-setting.md",
+    "tiny-robot-skill/tools/ai-client.md",
+    "tiny-robot-skill/tools/conversation.md",
+    "tiny-robot-skill/tools/message.md",
+    "tiny-robot-skill/tools/utils.md"
+  ],
+  "unexplained_missing": 0,
+  "hash_mismatches": 0
+}

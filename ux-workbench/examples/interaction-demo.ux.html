@@ -1,0 +1,879 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>商品草稿 · 交互演示</title>
+  <style>/* Complete OpenTiny base + semantic token declarations; pinned source and MIT notice in references/sources.md. */
+:root {
+  --tv-base-color-brand: #191919;
+  --tv-base-color-brand-1: #f0f7ff;
+  --tv-base-color-brand-2: #deecff;
+  --tv-base-color-brand-3: #b3d6ff;
+  --tv-base-color-brand-4: #7eb7fc;
+  --tv-base-color-brand-5: #4191fa;
+  --tv-base-color-brand-6: #1476ff;
+  --tv-base-color-brand-7: #0f5ed4;
+  --tv-base-color-brand-8: #0845a6;
+  --tv-base-color-brand-9: #022e7a;
+  --tv-base-color-brand-10: #001a4a;
+  --tv-base-color-brand-11: #3d6899;
+  --tv-base-color-brand-12: #7fa6d4;
+  --tv-base-color-brand-13: #b6d4f2;
+  --tv-base-color-common-1: #ffffff;
+  --tv-base-color-common-2: #fafafa;
+  --tv-base-color-common-3: #f5f5f5;
+  --tv-base-color-common-4: #f0f0f0;
+  --tv-base-color-common-5: #e6e6e6;
+  --tv-base-color-common-6: #dbdbdb;
+  --tv-base-color-common-7: #c2c2c2;
+  --tv-base-color-common-8: #808080;
+  --tv-base-color-common-9: #595959;
+  --tv-base-color-common-10: #333333;
+  --tv-base-color-common-11: #191919;
+  --tv-base-color-common-12: #000000;
+  --tv-base-color-success-1: #edf7df;
+  --tv-base-color-success-2: #daf2bb;
+  --tv-base-color-success-3: #b9e683;
+  --tv-base-color-success-4: #9edb58;
+  --tv-base-color-success-5: #7dcc29;
+  --tv-base-color-success-6: #5cb300;
+  --tv-base-color-success-7: #4b9902;
+  --tv-base-color-success-8: #3c8001;
+  --tv-base-color-success-9: #2e6600;
+  --tv-base-color-success-10: #1f4700;
+  --tv-base-color-success-11: #628c38;
+  --tv-base-color-success-12: #a2c777;
+  --tv-base-color-success-13: #d2e6b8;
+  --tv-base-color-success-14: #e6f2d5;
+  --tv-base-color-error-1: #fff1f0;
+  --tv-base-color-error-2: #fce2e0;
+  --tv-base-color-error-3: #faa7a3;
+  --tv-base-color-error-4: #fa8682;
+  --tv-base-color-error-5: #f76360;
+  --tv-base-color-error-6: #f23030;
+  --tv-base-color-error-7: #bf0a1c;
+  --tv-base-color-error-8: #a3171c;
+  --tv-base-color-error-9: #78080e;
+  --tv-base-color-error-10: #4d0005;
+  --tv-base-color-error-11: #a64242;
+  --tv-base-color-error-12: #f2c5c2;
+  --tv-base-color-error-13: #fce3e1;
+  --tv-base-color-warn-1: #fff4e8;
+  --tv-base-color-warn-2: #ffebd1;
+  --tv-base-color-warn-3: #fcd5a4;
+  --tv-base-color-warn-4: #fcbc72;
+  --tv-base-color-warn-5: #ff9a2e;
+  --tv-base-color-warn-6: #ff8800;
+  --tv-base-color-warn-7: #d96900;
+  --tv-base-color-warn-8: #a64d00;
+  --tv-base-color-warn-9: #733400;
+  --tv-base-color-warn-10: #4d2201;
+  --tv-base-color-warn-11: #9e6d3f;
+  --tv-base-color-warn-12: #d6a981;
+  --tv-base-color-warn-13: #f2d8c2;
+  --tv-base-color-warn-secondary-1: #ffb700;
+  --tv-base-color-info-1: #f0f7ff;
+  --tv-base-color-info-2: #deecff;
+  --tv-base-color-info-3: #b3d6ff;
+  --tv-base-color-info-4: #7eb7fc;
+  --tv-base-color-info-5: #4191fa;
+  --tv-base-color-info-6: #1476ff;
+  --tv-base-color-info-7: #0f5ed4;
+  --tv-base-color-info-8: #0845a6;
+  --tv-base-color-info-9: #022e7a;
+  --tv-base-color-info-10: #001a4a;
+  --tv-base-color-info-11: #3d6899;
+  --tv-base-color-info-12: #7fa6d4;
+  --tv-base-color-info-13: #b6d4f2;
+  --tv-color-success-text: var(--tv-base-color-success-6);
+  --tv-color-success-text-primary: var(--tv-base-color-common-11);
+  --tv-color-success-bg: var(--tv-base-color-success-6);
+  --tv-color-success-bg-light: var(--tv-base-color-success-14);
+  --tv-color-success-bg-1: var(--tv-base-color-success-14);
+  --tv-color-success-border: var(--tv-base-color-success-6);
+  --tv-color-success-border-light: var(--tv-base-color-success-14);
+  --tv-color-success-border-1: var(--tv-base-color-success-14);
+  --tv-color-success-icon: var(--tv-base-color-success-6);
+  --tv-color-error-text: var(--tv-base-color-error-6);
+  --tv-color-error-text-primary: var(--tv-base-color-common-11);
+  --tv-color-error-bg: var(--tv-base-color-error-6);
+  --tv-color-error-bg-1: var(--tv-base-color-error-13);
+  --tv-color-error-bg-light: var(--tv-base-color-error-13);
+  --tv-color-error-border: var(--tv-base-color-error-6);
+  --tv-color-error-border-light: var(--tv-base-color-error-13);
+  --tv-color-error-border-1: var(--tv-base-color-error-13);
+  --tv-color-error-icon: var(--tv-base-color-error-6);
+  --tv-color-warn-text: var(--tv-base-color-warn-6);
+  --tv-color-warn-text-primary: var(--tv-base-color-common-11);
+  --tv-color-warn-bg: var(--tv-base-color-warn-6);
+  --tv-color-warn-bg-light: var(--tv-base-color-warn-2);
+  --tv-color-warn-bg-1: var(--tv-base-color-warn-2);
+  --tv-color-warn-border: var(--tv-base-color-warn-6);
+  --tv-color-warn-border-light: var(--tv-base-color-warn-2);
+  --tv-color-warn-border-1: var(--tv-base-color-warn-2);
+  --tv-color-warn-icon: var(--tv-base-color-warn-6);
+  --tv-color-info-text: var(--tv-base-color-info-6);
+  --tv-color-info-text-primary: var(--tv-base-color-common-11);
+  --tv-color-info-text-1: var(--tv-base-color-info-6);
+  --tv-color-info-bg: var(--tv-base-color-info-6);
+  --tv-color-info-bg-1: var(--tv-base-color-info-2);
+  --tv-color-info-bg-light: var(--tv-base-color-info-2);
+  --tv-color-info-border: var(--tv-base-color-info-6);
+  --tv-color-info-border-light: var(--tv-base-color-info-2);
+  --tv-color-info-border-1: var(--tv-base-color-info-2);
+  --tv-color-info-icon: var(--tv-base-color-info-6);
+  --tv-color-act-primary-text: var(--tv-base-color-brand);
+  --tv-color-act-primary-text-hover: var(--tv-base-color-brand);
+  --tv-color-act-primary-text-active: var(--tv-base-color-brand);
+  --tv-color-act-primary-text-inverse-tint: var(--tv-base-color-common-1);
+  --tv-color-act-primary-text-inverse-tint-hover: var(--tv-base-color-common-1);
+  --tv-color-act-primary-text-inverse-tint-active: var(--tv-base-color-common-1);
+  --tv-color-act-primary-plain-text-hover: var(--tv-base-color-brand);
+  --tv-color-act-primary-bg: var(--tv-base-color-brand);
+  --tv-color-act-primary-bg-hover: var(--tv-base-color-common-9);
+  --tv-color-act-primary-bg-active: var(--tv-base-color-common-9);
+  --tv-color-act-primary-bg-white: var(--tv-base-color-common-1);
+  --tv-color-act-primary-bg-white-hover: var(--tv-base-color-common-1);
+  --tv-color-act-primary-bg-white-active: var(--tv-base-color-common-1);
+  --tv-color-act-primary-border: var(--tv-base-color-brand);
+  --tv-color-act-primary-border-hover: var(--tv-base-color-common-9);
+  --tv-color-act-primary-border-active: var(--tv-base-color-common-9);
+  --tv-color-act-primary-border-light: var(--tv-base-color-common-9);
+  --tv-color-act-primary-border-light-hover: var(--tv-base-color-common-1);
+  --tv-color-act-primary-border-light-active: var(--tv-base-color-common-1);
+  --tv-color-act-primary-border-light-hover-1: var(--tv-base-color-common-7);
+  --tv-color-act-primary-border-light-active-1: var(--tv-base-color-common-7);
+  --tv-color-act-success-text: var(--tv-base-color-success-6);
+  --tv-color-act-success-text-hover: var(--tv-base-color-success-6);
+  --tv-color-act-success-text-active: var(--tv-base-color-success-6);
+  --tv-color-act-success-text-white: var(--tv-base-color-common-1);
+  --tv-color-act-success-text-white-hover: var(--tv-base-color-common-1);
+  --tv-color-act-success-text-white-active: var(--tv-base-color-common-1);
+  --tv-color-act-success-plain-text-hover: var(--tv-base-color-success-6);
+  --tv-color-act-success-bg: var(--tv-base-color-success-6);
+  --tv-color-act-success-bg-hover: var(--tv-base-color-success-5);
+  --tv-color-act-success-bg-active: var(--tv-base-color-success-5);
+  --tv-color-act-success-bg-light: var(--tv-base-color-success-1);
+  --tv-color-act-success-bg-light-hover: var(--tv-base-color-success-1);
+  --tv-color-act-success-bg-light-active: var(--tv-base-color-success-1);
+  --tv-color-act-success-border: var(--tv-base-color-success-6);
+  --tv-color-act-success-border-hover: var(--tv-base-color-success-5);
+  --tv-color-act-success-border-active: var(--tv-base-color-success-5);
+  --tv-color-act-success-border-hover-1: var(--tv-base-color-success-2);
+  --tv-color-act-success-border-active-1: var(--tv-base-color-success-2);
+  --tv-color-act-success-border-light: var(--tv-base-color-success-2);
+  --tv-color-act-success-border-light-hover: var(--tv-base-color-success-1);
+  --tv-color-act-success-border-light-active: var(--tv-base-color-success-1);
+  --tv-color-act-warning-text: var(--tv-base-color-warn-6);
+  --tv-color-act-warning-text-hover: var(--tv-base-color-warn-6);
+  --tv-color-act-warning-text-active: var(--tv-base-color-warn-6);
+  --tv-color-act-warning-text-white: var(--tv-base-color-common-1);
+  --tv-color-act-warning-text-white-hover: var(--tv-base-color-common-1);
+  --tv-color-act-warning-text-white-active: var(--tv-base-color-common-1);
+  --tv-color-act-warning-plain-text-hover: var(--tv-base-color-warn-6);
+  --tv-color-act-warning-bg: var(--tv-base-color-warn-6);
+  --tv-color-act-warning-bg-hover: var(--tv-base-color-warn-5);
+  --tv-color-act-warning-bg-active: var(--tv-base-color-warn-5);
+  --tv-color-act-warning-bg-light: var(--tv-base-color-warn-1);
+  --tv-color-act-warning-bg-light-hover: var(--tv-base-color-warn-1);
+  --tv-color-act-warning-bg-light-active: var(--tv-base-color-warn-1);
+  --tv-color-act-warning-border: var(--tv-base-color-warn-6);
+  --tv-color-act-warning-border-hover: var(--tv-base-color-warn-5);
+  --tv-color-act-warning-border-active: var(--tv-base-color-warn-5);
+  --tv-color-act-warning-border-hover-1: var(--tv-base-color-warn-2);
+  --tv-color-act-warning-border-active-1: var(--tv-base-color-warn-2);
+  --tv-color-act-warning-border-light: var(--tv-base-color-warn-2);
+  --tv-color-act-warning-border-light-hover: var(--tv-base-color-warn-1);
+  --tv-color-act-warning-border-light-active: var(--tv-base-color-warn-1);
+  --tv-color-act-danger-text: var(--tv-base-color-error-6);
+  --tv-color-act-danger-text-hover: var(--tv-base-color-error-6);
+  --tv-color-act-danger-text-active: var(--tv-base-color-error-6);
+  --tv-color-act-danger-text-white: var(--tv-base-color-common-1);
+  --tv-color-act-danger-text-white-hover: var(--tv-base-color-common-1);
+  --tv-color-act-danger-text-white-active: var(--tv-base-color-common-1);
+  --tv-color-act-danger-plain-text-hover: var(--tv-base-color-error-6);
+  --tv-color-act-danger-bg: var(--tv-base-color-error-6);
+  --tv-color-act-danger-bg-hover: var(--tv-base-color-error-5);
+  --tv-color-act-danger-bg-active: var(--tv-base-color-error-5);
+  --tv-color-act-danger-bg-light: var(--tv-base-color-error-1);
+  --tv-color-act-danger-bg-light-hover: var(--tv-base-color-error-1);
+  --tv-color-act-danger-bg-light-active: var(--tv-base-color-error-1);
+  --tv-color-act-danger-border: var(--tv-base-color-error-6);
+  --tv-color-act-danger-border-hover: var(--tv-base-color-error-5);
+  --tv-color-act-danger-border-active: var(--tv-base-color-error-5);
+  --tv-color-act-danger-border-hover-1: var(--tv-base-color-error-2);
+  --tv-color-act-danger-border-active-1: var(--tv-base-color-error-2);
+  --tv-color-act-danger-border-light: var(--tv-base-color-error-2);
+  --tv-color-act-danger-border-light-hover: var(--tv-base-color-error-1);
+  --tv-color-act-danger-border-light-active: var(--tv-base-color-error-1);
+  --tv-color-act-info-text: var(--tv-base-color-info-6);
+  --tv-color-act-info-text-hover: var(--tv-base-color-info-6);
+  --tv-color-act-info-text-active: var(--tv-base-color-info-6);
+  --tv-color-act-info-text-white: var(--tv-base-color-common-1);
+  --tv-color-act-info-text-white-hover: var(--tv-base-color-common-1);
+  --tv-color-act-info-text-white-active: var(--tv-base-color-common-1);
+  --tv-color-act-info-plain-text-hover: var(--tv-base-color-info-6);
+  --tv-color-act-info-bg: var(--tv-base-color-info-6);
+  --tv-color-act-info-bg-hover: var(--tv-base-color-info-5);
+  --tv-color-act-info-bg-active: var(--tv-base-color-info-5);
+  --tv-color-act-info-bg-light: var(--tv-base-color-info-1);
+  --tv-color-act-info-bg-light-hover: var(--tv-base-color-info-1);
+  --tv-color-act-info-bg-light-active: var(--tv-base-color-info-1);
+  --tv-color-act-info-border: var(--tv-base-color-info-6);
+  --tv-color-act-info-border-hover: var(--tv-base-color-info-5);
+  --tv-color-act-info-border-active: var(--tv-base-color-info-5);
+  --tv-color-act-info-border-hover-1: var(--tv-base-color-info-2);
+  --tv-color-act-info-border-active-1: var(--tv-base-color-info-2);
+  --tv-color-act-info-border-light: var(--tv-base-color-info-2);
+  --tv-color-act-info-border-light-hover: var(--tv-base-color-info-1);
+  --tv-color-act-info-border-light-active: var(--tv-base-color-info-1);
+  --tv-color-text: var(--tv-base-color-common-11);
+  --tv-color-text-secondary: var(--tv-base-color-common-9);
+  --tv-color-text-weaken: var(--tv-base-color-common-8);
+  --tv-color-text-placeholder: var(--tv-base-color-common-8);
+  --tv-color-text-disabled: var(--tv-base-color-common-7);
+  --tv-color-text-active: var(--tv-base-color-brand-6);
+  --tv-color-text-important: var(--tv-base-color-common-11);
+  --tv-color-text-link: var(--tv-base-color-brand-6);
+  --tv-color-text-link-hover: var(--tv-base-color-brand-6);
+  --tv-color-plain-text-hover: var(--tv-base-color-common-11);
+  --tv-color-text-control: var(--tv-base-color-common-11);
+  --tv-color-text-inverse: var(--tv-base-color-common-1);
+  --tv-color-text-inverse-tint: var(--tv-base-color-common-1);
+  --tv-color-text-inverse-black: var(--tv-base-color-common-11);
+  --tv-color-text-active-1: var(--tv-base-color-common-11);
+  --tv-color-text-active-2: var(--tv-base-color-info-6);
+  --tv-color-text-active-3: var(--tv-base-color-common-11);
+  --tv-color-text-inverse-active: var(--tv-base-color-common-1);
+  --tv-color-text-hover: var(--tv-base-color-common-11);
+  --tv-color-text-link-1: var(--tv-base-color-common-11);
+  --tv-color-text-link-1-hover: var(--tv-base-color-common-11);
+  --tv-color-icon: var(--tv-base-color-common-8);
+  --tv-color-icon-hover: var(--tv-base-color-common-11);
+  --tv-color-icon-active: var(--tv-base-color-common-11);
+  --tv-color-icon-disabled: var(--tv-base-color-common-7);
+  --tv-color-icon-checked-disabled: var(--tv-base-color-common-6);
+  --tv-color-icon-control: var(--tv-base-color-brand);
+  --tv-color-icon-control-active: var(--tv-base-color-brand-6);
+  --tv-color-icon-control-disabled: var(--tv-base-color-common-6);
+  --tv-color-icon-link: var(--tv-base-color-brand-6);
+  --tv-color-icon-warn-secondary: var(--tv-base-color-warn-secondary-1);
+  --tv-color-icon-inverse: var(--tv-base-color-common-1);
+  --tv-color-icon-inverse-tint: var(--tv-base-color-common-1);
+  --tv-color-no-data-gary-1: var(--tv-base-color-common-4);
+  --tv-color-no-data-gary-2: var(--tv-base-color-common-1);
+  --tv-color-no-data-border: var(--tv-base-color-common-8);
+  --tv-color-no-data-brand: var(--tv-base-color-brand-6);
+  --tv-color-bg: var(--tv-base-color-common-3);
+  --tv-color-bg-primary: var(--tv-base-color-brand);
+  --tv-color-bg-secondary: var(--tv-base-color-common-1);
+  --tv-color-bg-control: var(--tv-base-color-common-7);
+  --tv-color-bg-control-unactive: var(--tv-base-color-common-7);
+  --tv-color-bg-gray-1: var(--tv-base-color-common-2);
+  --tv-color-bg-gray-2: var(--tv-base-color-common-5);
+  --tv-color-bg-header: var(--tv-base-color-common-3);
+  --tv-color-bg-mask: rgba(0, 0, 0, 20%);
+  --tv-color-bg-mask-block: rgba(255, 255, 255, 70%);
+  --tv-color-bg-dark: var(--tv-base-color-brand);
+  --tv-color-bg-disabled: var(--tv-base-color-common-4);
+  --tv-color-bg-disabled-control-checked: var(--tv-base-color-common-6);
+  --tv-color-bg-disabled-control-unactive: var(--tv-base-color-common-6);
+  --tv-color-bg-disabled-control-active: var(--tv-base-color-brand-3);
+  --tv-color-bg-hover: var(--tv-base-color-common-3);
+  --tv-color-bg-hover-primary: var(--tv-base-color-common-9);
+  --tv-color-bg-hover-secondary: var(--tv-base-color-common-1);
+  --tv-color-bg-hover-1: var(--tv-base-color-brand-2);
+  --tv-color-bg-hover-2: var(--tv-base-color-common-5);
+  --tv-color-bg-hover-dark: var(--tv-base-color-common-11);
+  --tv-color-bg-active: var(--tv-base-color-common-3);
+  --tv-color-bg-active-control: var(--tv-base-color-brand-6);
+  --tv-color-bg-active-primary: var(--tv-base-color-brand);
+  --tv-color-bg-active-secondary: var(--tv-base-color-common-1);
+  --tv-color-bg-active-emphasize: var(--tv-base-color-brand-2);
+  --tv-color-bg-active-emphasize-light: var(--tv-base-color-brand-1);
+  --tv-color-bg-active-dark: var(--tv-base-color-common-3);
+  --tv-color-bg-2: var(--tv-base-color-common-1);
+  --tv-color-bg-3: var(--tv-base-color-common-1);
+  --tv-color-bg-4: var(--tv-base-color-common-7);
+  --tv-color-bg-progressbar: var(--tv-base-color-success-6);
+  --tv-color-bg-active-emphasize-1: var(--tv-base-color-common-1);
+  --tv-color-bg-container-hover: var(--tv-base-color-common-1);
+  --tv-color-bg-hover-3: var(--tv-base-color-brand-2);
+  --tv-color-bg-hover-4: var(--tv-base-color-common-1);
+  --tv-color-bg-active-primary-1: var(--tv-base-color-common-9);
+  --tv-color-bg-inverse: var(--tv-base-color-common-1);
+  --tv-color-bg-active-control-1: var(--tv-base-color-common-6);
+  --tv-color-bg-5: var(--tv-base-color-common-5);
+  --tv-color-bg-5-active: var(--tv-base-color-common-9);
+  --tv-color-bg-inverse-tint-1: var(--tv-base-color-common-1);
+  --tv-color-bg-disabled-control: var(--tv-base-color-common-7);
+  --tv-color-bg-inverse-disabled: var(--tv-base-color-common-1);
+  --tv-color-bg-dark-1: var(--tv-base-color-common-11);
+  --tv-color-border: var(--tv-base-color-common-7);
+  --tv-color-border-hover: var(--tv-base-color-brand);
+  --tv-color-border-active: var(--tv-base-color-brand);
+  --tv-color-border-active-control: var(--tv-base-color-brand-6);
+  --tv-color-border-disabled: var(--tv-base-color-common-6);
+  --tv-color-border-secondary: var(--tv-base-color-common-9);
+  --tv-color-border-ghost: var(--tv-base-color-common-8);
+  --tv-color-border-ghost-active: var(--tv-base-color-common-6);
+  --tv-color-border-divider: var(--tv-base-color-common-4);
+  --tv-color-border-divider-short: var(--tv-base-color-common-6);
+  --tv-color-border-secondary-hover: var(--tv-base-color-common-7);
+  --tv-color-border-container: var(--tv-base-color-common-4);
+  --tv-color-border-container-hover: var(--tv-base-color-common-1);
+  --tv-color-border-container-active: var(--tv-base-color-brand-6);
+  --tv-color-border-inverse-tint: var(--tv-base-color-common-1);
+  --tv-color-border-1: var(--tv-base-color-common-6);
+  --tv-font-family: 'Helvetica', 'Arial', 'PingFangSC-Regular', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', 'Microsoft JhengHei';
+  --tv-font-family-1: 'Arial', 'San Francisco', 'Helvetica';
+  --tv-font-size-sm: 12px;
+  --tv-font-size-md: 14px;
+  --tv-font-size-lg: 16px;
+  --tv-font-size-xl: 18px;
+  --tv-font-size-xxl: 20px;
+  --tv-font-size-default: var(--tv-font-size-md);
+  --tv-font-size-heading-xs: 16px;
+  --tv-font-size-heading-sm: 18px;
+  --tv-font-size-heading-md: 20px;
+  --tv-font-size-heading-lg: 24px;
+  --tv-font-size-heading-xl: 32px;
+  --tv-line-height-number: 1.5;
+  --tv-font-weight-thin: 200;
+  --tv-font-weight-regular: 400;
+  --tv-font-weight-bold: 600;
+  --tv-border-radius-xs: 2px;
+  --tv-border-radius-sm: 4px;
+  --tv-border-radius-md: 6px;
+  --tv-border-radius-lg: 8px;
+  --tv-border-radius-round: 999px;
+  --tv-border-radius-brand: var(--tv-border-radius-round);
+  --tv-border-width: 1px;
+  --tv-space-base: 4px;
+  --tv-space-xs: 2px;
+  --tv-space-sm: var(--tv-space-base);
+  --tv-space-md: calc(var(--tv-space-base) * 2);
+  --tv-space-lg: calc(var(--tv-space-base) * 3);
+  --tv-space-xl: calc(var(--tv-space-base) * 4);
+  --tv-space-xxl: calc(var(--tv-space-base) * 6);
+  --tv-space-xxxl: calc(var(--tv-space-base) * 8);
+  --tv-space-table-x: 4px;
+  --tv-space-table-y: 4px;
+  --tv-size-base: 4px;
+  --tv-size-height-xs: 24px;
+  --tv-size-height-sm: 28px;
+  --tv-size-height-md: 32px;
+  --tv-size-height-lg: 40px;
+  --tv-size-height-xl: 48px;
+  --tv-icon-size: 16px;
+  --tv-shadow-0: 0 4px 16px 0 rgba(0, 0, 0, 0.08);
+  --tv-shadow-1: 0 0 0 0 rgba(0, 0, 0, 0);
+  --tv-shadow-cell-left: -5px 0 5px 0 rgba(0, 0, 0, 0.10);
+  --tv-shadow-cell-right: 5px 0 5px 0 rgba(0, 0, 0, 0.10);
+  --tv-shadow-1-up: 0 -1px 4px 0 rgba(0, 0, 0, 0.08);
+  --tv-shadow-1-down: 0 1px 4px 0 rgba(0, 0, 0, 0.08);
+  --tv-shadow-1-left: -1px 0 4px 0 rgba(0, 0, 0, 0.08);
+  --tv-shadow-1-right: 1px 0 4px 0 rgba(0, 0, 0, 0.08);
+  --tv-shadow-2-up: 0 -2px 12px 0 rgba(0, 0, 0, 0.16);
+  --tv-shadow-2-down: 0 2px 12px 0 rgba(0, 0, 0, 0.16);
+  --tv-shadow-2-left: -2px 0 12px 0 rgba(0, 0, 0, 0.16);
+  --tv-shadow-2-right: 2px 0 12px 0 rgba(0, 0, 0, 0.16);
+  --tv-shadow-3-up: 0 -4px 16px 0 rgba(0, 0, 0, 0.08);
+  --tv-shadow-3-down: 0 4px 16px 0 rgba(0, 0, 0, 0.08);
+  --tv-shadow-3-left: -4px 0 16px 0 rgba(0, 0, 0, 0.08);
+  --tv-shadow-3-right: 4px 0 16px 0 rgba(0, 0, 0, 0.08);
+  --tv-shadow-4-up: 0 -8px 24px 0 rgba(0, 0, 0, 0.16);
+  --tv-shadow-4-down: 0 8px 24px 0 rgba(0, 0, 0, 0.16);
+  --tv-shadow-4-left: -8px 0 24px 0 rgba(0, 0, 0, 0.16);
+  --tv-shadow-4-right: 8px 0 24px 0 rgba(0, 0, 0, 0.16);
+  --tv-size-scrollbar-width: 8px;
+  --tv-size-scrollbar-height: 8px;
+  --tv-border-radius-scrollbar-thumb: 4px;
+  --tv-color-bg-scrollbar-thumb: var(--tv-base-color-common-6);
+  --tv-color-bg-scrollbar-thumb-hover: var(--tv-base-color-common-6);
+  --tv-color-bg-scrollbar-thumb-active: var(--tv-base-color-common-6);
+  --tv-color-bg-scrollbar-track: var(--tv-base-color-common-1);
+  --tv-motion-ants-shift: 8px;
+  --tv-motion-ants-speed: 0.8s;
+  --tv-motion-arrow-offset: 16px;
+  --tv-motion-arrow-left-init: -17px;
+  --tv-motion-arrow-left-mid: -13px;
+  --tv-motion-arrow-right-init: -17px;
+  --tv-motion-arrow-right-mid: -13px;
+  --tv-motion-arrow-speed: 0.3s;
+  --tv-motion-bounce-scale-min: 0;
+  --tv-motion-bounce-scale-mid: 1.2;
+  --tv-motion-bounce-scale-max: 1;
+  --tv-motion-bounce-speed: 0.3s;
+  --tv-motion-fade-offset-x: 20px;
+  --tv-motion-fade-offset-y: 20px;
+  --tv-motion-fade-speed: 0.3s;
+  --tv-motion-skeleton-speed: 1.5s;
+  --tv-motion-skeleton-background-offset: -20%;
+  --tv-motion-grid-loading-speed: 1.04s;
+  --tv-motion-grid-loading-opacity: 0.1;
+  --tv-motion-progress-background-shift: 32px;
+  --tv-motion-progress-speed: 1s;
+  --tv-motion-rotate-speed: 2s;
+  --tv-motion-rotate-degrees: 360deg;
+  --tv-motion-scroll-speed: 3s;
+  --tv-motion-scroll-offset-x: 100%;
+  --tv-motion-scroll-offset-x-end: -100%;
+  --tv-motion-scroll-offset-y: 100%;
+  --tv-motion-scroll-offset-y-end: -100%;
+  --tv-motion-shine-speed: 1s;
+  --tv-motion-shine-offset-x: -12px;
+  --tv-motion-shine-offset-y: -12px;
+  --tv-motion-slide-speed: 0.3s;
+  --tv-motion-slide-opacity-mid: 0.6;
+  --tv-motion-slide-offset-left: -100%;
+  --tv-motion-slide-offset-left-mid: -50%;
+  --tv-motion-slide-offset-right: 100%;
+  --tv-motion-slide-offset-right-mid: 50%;
+  --tv-motion-slide-offset-top: -100%;
+  --tv-motion-slide-offset-top-mid: -50%;
+  --tv-motion-slide-offset-bottom: 100%;
+  --tv-motion-slide-offset-bottom-mid: 50%;
+  --tv-motion-stroke-speed: 1.5s;
+  --tv-motion-stroke-dasharray-0: 1, 200;
+  --tv-motion-stroke-dasharray-50: 90, 150;
+  --tv-motion-stroke-dasharray-100: 90, 150;
+  --tv-motion-stroke-offset-0: 0;
+  --tv-motion-stroke-offset-50: -40px;
+  --tv-motion-stroke-offset-100: -120px;
+  --tv-motion-stroke-offset-reverse-50: 40px;
+  --tv-motion-stroke-offset-reverse-100: 120px;
+  --tv-motion-tab-speed: 0.3s;
+  --tv-motion-tab-opacity-start: 0;
+  --tv-motion-tab-opacity-end: 1;
+  --tv-motion-tab-offset-x-start: 100%;
+  --tv-motion-tab-offset-x-end: 0;
+  --tv-motion-tab-offset-x-start-left: -100%;
+  --tv-motion-tab-offset-y-start: 100%;
+  --tv-motion-tab-offset-y-start-down: -100%;
+  --tv-motion-tab-offset-y-end: 0;
+  --tv-motion-scale-speed: 0.3s;
+  --tv-motion-scale-start: 0;
+  --tv-motion-scale-mid: 0.5;
+  --tv-motion-scale-end: 1;
+  --tv-motion-scale-opacity-start: 0;
+  --tv-motion-scale-opacity-mid: 0.5;
+  --tv-motion-scale-opacity-end: 1;
+}
+
+/* Convenience aliases to the complete OpenTiny token system. Exact sources and MIT notice: references/sources.md. */
+:root {
+  --ux-primary:var(--tv-color-bg-primary); --ux-primary-hover:var(--tv-color-act-primary-bg-hover);
+  --ux-link:var(--tv-color-text-link); --ux-selected:var(--tv-color-bg-active-control); --ux-selected-bg:var(--tv-base-color-brand-1);
+  --ux-text:var(--tv-color-text); --ux-secondary:var(--tv-color-text-secondary); --ux-muted:var(--tv-color-text-weaken);
+  --ux-page:var(--tv-color-bg); --ux-surface:var(--tv-color-bg-3); --ux-border:var(--tv-color-border); --ux-divider:var(--tv-color-border-divider);
+  --ux-disabled-bg:var(--tv-color-bg-disabled); --ux-disabled-text:var(--tv-color-text-disabled);
+  --ux-success:var(--tv-color-success-bg); --ux-warning:var(--tv-color-warn-bg); --ux-error:var(--tv-color-error-bg);
+  --ux-success-bg:var(--tv-color-success-bg-light); --ux-warning-bg:var(--tv-color-warn-bg-light); --ux-error-bg:var(--tv-color-error-bg-light);
+  --ux-mask:var(--tv-color-bg-mask);
+  --ux-font:var(--tv-font-family),sans-serif;
+  --ux-font-sm:var(--tv-font-size-sm); --ux-font-md:var(--tv-font-size-md); --ux-title-card:var(--tv-font-size-heading-xs); --ux-title-page:var(--tv-font-size-heading-sm); --ux-title-dialog:var(--tv-font-size-heading-md);
+  --ux-line:var(--tv-line-height-number); --ux-weight:var(--tv-font-weight-bold);
+  --ux-radius:var(--tv-border-radius-md); --ux-radius-panel:var(--tv-border-radius-lg); --ux-radius-small:var(--tv-border-radius-sm);
+  --ux-control:var(--tv-size-height-md); --ux-control-sm:var(--tv-size-height-sm); --ux-control-lg:var(--tv-size-height-lg);
+  --ux-gap-1:var(--tv-space-sm); --ux-gap-2:var(--tv-space-md); --ux-gap-3:var(--tv-space-lg); --ux-gap-4:var(--tv-space-xl); --ux-gap-5:var(--tv-space-xxl); --ux-gap-6:var(--tv-space-xxxl);
+  --ux-shadow-panel:var(--tv-shadow-4-down);
+  --ux-shadow-drawer:var(--tv-shadow-4-left);
+  --ux-gap-xs:var(--tv-space-xs); --ux-control-xs:var(--tv-size-height-xs); --ux-control-xl:var(--tv-size-height-xl);
+  /* Prototype layout values, not upstream mandates. */
+  --ux-page-width:1200px; --ux-dialog-width:560px; --ux-drawer-width:880px; --ux-sender-height:48px;
+}
+
+*{box-sizing:border-box} [hidden]{display:none!important} html{color-scheme:light}
+body{margin:0;background:var(--ux-page);color:var(--ux-text);font:var(--ux-font-md)/var(--ux-line) var(--ux-font)}
+button,input,select,textarea{font:inherit} button{cursor:pointer} button:disabled{cursor:not-allowed}
+a{color:var(--ux-link)}
+/* Keyboard fallback for action controls. Input focus is its existing border, as in OpenTiny Input. */
+:where(a,button,summary,input[type=checkbox],input[type=radio],[tabindex]):focus-visible{outline:2px solid var(--ux-primary);outline-offset:3px}
+h1,h2,h3,p{margin:0} h1,h2,h3{font-weight:var(--ux-weight)} h1{font-size:var(--ux-title-page)} h2{font-size:var(--ux-title-card)} h3{font-size:14px}
+.ux-page{max-width:var(--ux-page-width);margin:auto;padding:32px 24px 96px}
+.ux-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.ux-between{justify-content:space-between}.ux-stack{display:grid;gap:16px}.ux-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.ux-section{padding:24px;background:var(--ux-surface);border-radius:var(--ux-radius-panel)}
+.ux-section>h2{margin-bottom:16px}.ux-muted{color:var(--ux-secondary)}.ux-hint{font-size:12px;color:var(--ux-muted);margin-top:6px}.ux-rule{border:0;border-top:1px solid var(--ux-divider);margin:24px 0}
+.ux-btn{min-width:96px;min-height:var(--ux-control);padding:4px 24px;border:1px solid var(--ux-secondary);border-radius:var(--ux-radius);background:var(--ux-surface);color:var(--ux-text);display:inline-flex;justify-content:center;align-items:center;gap:6px;white-space:nowrap}
+.ux-btn:hover:not(:disabled){border-color:var(--ux-border)}.ux-btn.primary{background:var(--ux-primary);border-color:var(--ux-primary);color:#fff}.ux-btn.primary:hover:not(:disabled){background:var(--ux-primary-hover);border-color:var(--ux-primary-hover)}
+.ux-btn.text{border-color:transparent;background:transparent;color:var(--ux-link);padding:4px 8px;min-width:0}.ux-btn.icon{min-width:32px;padding:4px}.ux-btn.danger{color:var(--ux-error);border-color:var(--ux-error)}
+.ux-btn:disabled{background:var(--ux-disabled-bg);border-color:#dbdbdb;color:var(--ux-disabled-text)}.ux-btn.text:disabled{background:transparent;border-color:transparent}.ux-btn.small{min-height:28px;min-width:72px;padding:2px 16px;font-size:12px}
+.ux-field{display:grid;gap:6px;align-content:start}.ux-field>label,.ux-label{font-weight:600}.ux-required{color:var(--ux-error)}
+.ux-input{width:100%;min-width:0;height:var(--ux-control);padding:0 12px;border:1px solid var(--ux-border);border-radius:var(--ux-radius);background:var(--ux-surface);color:var(--ux-text);outline:0}
+.ux-input:hover,.ux-input:focus{border-color:var(--ux-primary)}.ux-input::placeholder{color:var(--ux-muted)}textarea.ux-input{height:96px;padding:8px 12px;resize:vertical}
+.ux-input:disabled{color:var(--ux-disabled-text);background:var(--ux-disabled-bg);border-color:#dbdbdb}.ux-input[aria-invalid=true]{border-color:var(--ux-error)}.ux-error{color:var(--ux-error);font-size:12px}
+.ux-footer{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--ux-divider);padding:16px 24px;display:flex;align-items:center;justify-content:flex-end;gap:12px;z-index:10}
+.ux-review{font-size:12px;color:var(--ux-muted);margin-top:24px}.ux-review summary{cursor:pointer}.ux-review p{padding-top:8px}
+@media(max-width:767px){.ux-page{padding:20px 16px 110px}.ux-grid{grid-template-columns:1fr}.ux-section{padding:20px}.ux-footer{flex-wrap:wrap}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+.ux-dialog{border:0;border-radius:8px;width:min(var(--ux-dialog-width),calc(100vw - 32px));max-height:calc(100dvh - 32px);padding:0;box-shadow:var(--ux-shadow-panel);color:var(--ux-text)}
+.ux-dialog::backdrop{background:var(--ux-mask)}.ux-dialog[open]{display:flex;flex-direction:column}.ux-dialog-head{padding:24px 32px 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex:none}.ux-dialog-head h2{font-size:20px}
+.ux-dialog-body{padding:8px 32px 24px;overflow:auto;min-height:0;flex:1}.ux-dialog-foot{display:flex;justify-content:flex-end;gap:8px;padding:16px 32px 24px;flex:none}
+.ux-drawer{margin:0 0 0 auto;width:min(var(--ux-drawer-width),100vw);max-width:100vw;height:100dvh;max-height:100dvh;border-radius:4px 0 0 4px;box-shadow:var(--ux-shadow-drawer)}.ux-drawer .ux-dialog-head{border-bottom:1px solid var(--ux-divider)}.ux-drawer .ux-dialog-foot{border-top:1px solid var(--ux-divider);padding:16px 24px}
+@media(max-width:767px){.ux-dialog-head{padding:20px 20px 12px}.ux-dialog-body{padding:8px 20px 20px}.ux-dialog-foot{padding:16px 20px}}
+
+  .demo-page{max-width:760px}.demo-header{margin-bottom:24px}.demo-header p{margin-top:8px}
+  .demo-form{gap:24px}.demo-actions{margin-top:4px}.demo-status{min-height:24px;color:var(--ux-secondary)}
+  dialog:modal{overscroll-behavior:contain}dialog::backdrop{overflow:hidden;overscroll-behavior:contain}
+  .preview-name{font-size:18px;overflow-wrap:anywhere}.preview-hint{margin-top:12px}
+  </style>
+</head>
+<body>
+  <main class="ux-page demo-page">
+    <header class="demo-header">
+      <h1>商品草稿</h1>
+      <p class="ux-muted">填写商品名称，预览并保存草稿。</p>
+    </header>
+    <section class="ux-section">
+      <h2>基本信息</h2>
+      <form id="draftForm" class="ux-stack demo-form">
+        <div class="ux-field">
+          <label for="productName">商品名称 <span class="ux-required">*</span></label>
+          <p id="nameHint" class="ux-hint">最多 80 字。</p>
+          <input class="ux-input" id="productName" name="productName" data-ux-anchor="demo.product-name" value="DataPilot 智能数据分析平台" maxlength="80" required aria-describedby="nameHint">
+        </div>
+        <div class="ux-row demo-actions">
+          <button class="ux-btn primary" id="saveDraft" data-ux-anchor="demo.save" type="submit">保存草稿</button>
+          <button class="ux-btn" id="openPreview" data-ux-anchor="demo.preview" type="button">预览内容</button>
+        </div>
+        <p id="saveStatus" class="demo-status" role="status">尚未保存</p>
+      </form>
+    </section>
+  </main>
+  <dialog id="previewDialog" data-ux-anchor="demo.dialog" class="ux-dialog" aria-labelledby="previewTitle">
+    <div class="ux-dialog-head"><h2 id="previewTitle">商品预览</h2></div>
+    <div class="ux-dialog-body">
+      <p id="previewName" class="preview-name"></p>
+      <p class="ux-muted preview-hint">关闭预览后，可继续编辑商品名称。</p>
+    </div>
+    <form method="dialog" class="ux-dialog-foot"><button class="ux-btn primary" value="close" autofocus>关闭预览</button></form>
+  </dialog>
+  <script>
+  (() => {
+    const form = document.getElementById('draftForm');
+    const name = document.getElementById('productName');
+    const status = document.getElementById('saveStatus');
+    const preview = document.getElementById('previewDialog');
+    const storageKey = 'ux-review-interaction-demo-draft-v1';
+    const valid = () => {
+      name.setCustomValidity(name.value.trim() ? '' : '请填写商品名称');
+      return form.reportValidity();
+    };
+    name.addEventListener('input', () => { name.setCustomValidity(''); status.textContent = '有未保存的修改'; });
+    form.addEventListener('submit', event => {
+      event.preventDefault();
+      if (!valid()) return;
+      const draft = { name: name.value.trim() };
+      try { localStorage.setItem(storageKey, JSON.stringify(draft)); status.textContent = '已保存：' + draft.name; }
+      catch { status.textContent = '本次会话已保存：' + draft.name + '（当前环境不支持本地存储）'; }
+    });
+    document.getElementById('openPreview').addEventListener('click', () => {
+      if (!valid()) return;
+      document.getElementById('previewName').textContent = name.value.trim();
+      preview.showModal();
+    });
+    try {
+      const saved = JSON.parse(localStorage.getItem(storageKey) || 'null');
+      if (typeof saved?.name === 'string' && saved.name.trim() && saved.name.length <= 80) {
+        name.value = saved.name; status.textContent = '已恢复草稿：' + saved.name;
+      }
+    } catch { /* The demo also works in a sandbox without persistent storage. */ }
+  })();
+  </script>
+<!-- ux-document:start -->
+<script type="application/json" id="ux-document">
+{
+  "format": "ux-review-document",
+  "schemaVersion": 1,
+  "id": "doc-interaction-demo",
+  "title": "商品草稿 · 交互演示",
+  "uxVersion": 1,
+  "revision": 4,
+  "agentCheckpoint": 2,
+  "createdAt": "2026-11-14T16:07:51.824Z",
+  "updatedAt": "2026-11-14T16:16:18.495Z",
+  "prd": "# 商品草稿 · 交互演示\n\n## 1. 输入与保存\n\n商品名称必填，最多 80 字，空白名称不能提交。主操作将当前名称保存为草稿并展示明确的结果反馈；支持存储的环境中刷新可恢复草稿。存储不可用时，仅在当前页面会话中提供反馈。\n\n## 2. 预览\n\n点击「预览内容」打开商品预览弹窗，展示当前输入值。弹窗可通过「关闭预览」或 Esc 关闭，关闭后返回原控件；预览不自动保存。\n\n## 3. 本次评审\n\n请在修改意见中选择按钮文案意见交给 AI。验收时检查主按钮的新文案和保存反馈，并确认原有交互说明仍然存在。示例不连接真实业务服务。\n",
+  "annotations": {
+    "ann-demo-name-explanation": {
+      "id": "ann-demo-name-explanation",
+      "kind": "explanation",
+      "body": "商品名称必填，最多 80 字。保存时校验空白内容；预览展示当前输入值，关闭弹窗后保留输入。",
+      "anchor": {
+        "kind": "element",
+        "id": "demo.product-name",
+        "selector": "[data-ux-anchor=\"demo.product-name\"]",
+        "tag": "input",
+        "text": "商品名称"
+      },
+      "createdBy": {
+        "kind": "agent",
+        "name": "AI"
+      },
+      "updatedBy": {
+        "kind": "agent",
+        "name": "AI"
+      },
+      "createdAt": "2026-11-14T16:07:51.825Z",
+      "updatedAt": "2026-11-14T16:07:51.825Z"
+    },
+    "ann-demo-rename-save": {
+      "id": "ann-demo-rename-save",
+      "assignee": {
+        "kind": "agent",
+        "name": "AI"
+      },
+      "example": true,
+      "kind": "change-request",
+      "body": "请把主按钮的准确文案从「保存草稿」修改为「保存并继续」。保留按钮 ID、稳定锚点及现有保存行为。验收：点击「保存并继续」仍显示保存反馈；不要改动商品名称的交互说明。\n\n本轮只调整此按钮文案，其余界面和 PRD 保持原样。",
+      "anchor": {
+        "kind": "element",
+        "id": "demo.save",
+        "selector": "[data-ux-anchor=\"demo.save\"]",
+        "tag": "button",
+        "text": "保存草稿"
+      },
+      "createdBy": {
+        "kind": "human",
+        "name": "示例评审者"
+      },
+      "updatedBy": {
+        "kind": "human",
+        "name": "产品"
+      },
+      "createdAt": "2026-11-14T16:07:51.827Z",
+      "updatedAt": "2026-11-14T16:16:18.495Z",
+      "status": "open"
+    }
+  },
+  "changes": [
+    {
+      "id": "change-demo-created",
+      "actor": "system",
+      "kind": "created",
+      "revision": 1,
+      "uxVersion": 1,
+      "at": "2026-11-14T16:07:51.824Z",
+      "summary": "创建 UX 协作文档",
+      "details": [
+        "建立单文件原型、PRD 与变更记录"
+      ],
+      "patch": [
+        {
+          "op": "add",
+          "path": "/prd",
+          "value": "# 商品草稿 · 交互演示\n\n## 1. 输入与保存\n\n商品名称必填，最多 80 字，空白名称不能提交。主操作将当前名称保存为草稿并展示明确的结果反馈；支持存储的环境中刷新可恢复草稿。存储不可用时，仅在当前页面会话中提供反馈。\n\n## 2. 预览\n\n点击「预览内容」打开商品预览弹窗，展示当前输入值。弹窗可通过「关闭预览」或 Esc 关闭，关闭后返回原控件；预览不自动保存。\n\n## 3. 本次评审\n\n请在修改意见中选择按钮文案意见交给 AI。验收时检查主按钮的新文案和保存反馈，并确认原有交互说明仍然存在。示例不连接真实业务服务。\n"
+        }
+      ],
+      "diff": {
+        "prd": "--- before\n+++ after\n@@ -1,1 +1,14 @@\n+# 商品草稿 · 交互演示\n \n+## 1. 输入与保存\n+\n+商品名称必填，最多 80 字，空白名称不能提交。主操作将当前名称保存为草稿并展示明确的结果反馈；支持存储的环境中刷新可恢复草稿。存储不可用时，仅在当前页面会话中提供反馈。\n+\n+## 2. 预览\n+\n+点击「预览内容」打开商品预览弹窗，展示当前输入值。弹窗可通过「关闭预览」或 Esc 关闭，关闭后返回原控件；预览不自动保存。\n+\n+## 3. 本次评审\n+\n+请在修改意见中选择按钮文案意见交给 AI。验收时检查主按钮的新文案和保存反馈，并确认原有交互说明仍然存在。示例不连接真实业务服务。\n+"
+      }
+    },
+    {
+      "id": "change-demo-explanation",
+      "actor": "agent",
+      "author": {
+        "kind": "agent",
+        "name": "AI"
+      },
+      "kind": "documentation",
+      "revision": 2,
+      "uxVersion": 1,
+      "at": "2026-11-14T16:07:51.825Z",
+      "summary": "补充商品名称输入的交互说明",
+      "details": [
+        "说明输入校验、保存和预览行为，便于人工讲解与测试。"
+      ],
+      "patch": [
+        {
+          "op": "add",
+          "path": "/annotations/ann-demo-name-explanation",
+          "value": {
+            "id": "ann-demo-name-explanation",
+            "kind": "explanation",
+            "body": "商品名称必填，最多 80 字。保存时校验空白内容；预览展示当前输入值，关闭弹窗后保留输入。",
+            "anchor": {
+              "kind": "element",
+              "id": "demo.product-name",
+              "selector": "[data-ux-anchor=\"demo.product-name\"]",
+              "tag": "input",
+              "text": "商品名称"
+            },
+            "createdBy": {
+              "kind": "agent",
+              "name": "AI"
+            },
+            "updatedBy": {
+              "kind": "agent",
+              "name": "AI"
+            },
+            "createdAt": "2026-11-14T16:07:51.825Z",
+            "updatedAt": "2026-11-14T16:07:51.825Z"
+          }
+        }
+      ],
+      "diff": {
+        "prd": "",
+        "ux": {
+          "changed": false,
+          "before": "2ab8bfa5",
+          "after": "2ab8bfa5"
+        }
+      },
+      "selectedAnnotationIds": [],
+      "resolvedAnnotationIds": [],
+      "resolvedIds": [],
+      "clearedAnnotationIds": [],
+      "basedOnRevision": 1,
+      "baseRevision": 1
+    },
+    {
+      "id": "change-demo-rename-request",
+      "actor": "human",
+      "author": {
+        "kind": "human",
+        "name": "示例评审者"
+      },
+      "kind": "review",
+      "revision": 3,
+      "uxVersion": 1,
+      "at": "2026-11-14T16:07:51.827Z",
+      "summary": "示例：提出主按钮文案修改意见",
+      "details": [
+        "新增修改意见：请把主按钮的准确文案从「保存草稿」修改为「保存并继续」。保留按钮 ID、稳定锚点及现有保存行为。验收：点击「保存并继续」仍显示保存反馈；不要改动商品名称的交互说明。"
+      ],
+      "patch": [
+        {
+          "op": "add",
+          "path": "/annotations/ann-demo-rename-save",
+          "value": {
+            "id": "ann-demo-rename-save",
+            "assignee": {
+              "kind": "agent",
+              "name": "AI"
+            },
+            "example": true,
+            "kind": "change-request",
+            "body": "请把主按钮的准确文案从「保存草稿」修改为「保存并继续」。保留按钮 ID、稳定锚点及现有保存行为。验收：点击「保存并继续」仍显示保存反馈；不要改动商品名称的交互说明。",
+            "anchor": {
+              "kind": "element",
+              "id": "demo.save",
+              "selector": "[data-ux-anchor=\"demo.save\"]",
+              "tag": "button",
+              "text": "保存草稿"
+            },
+            "createdBy": {
+              "kind": "human",
+              "name": "示例评审者"
+            },
+            "updatedBy": {
+              "kind": "human",
+              "name": "示例评审者"
+            },
+            "createdAt": "2026-11-14T16:07:51.827Z",
+            "updatedAt": "2026-11-14T16:07:51.827Z",
+            "status": "open"
+          }
+        }
+      ],
+      "diff": {
+        "prd": ""
+      }
+    },
+    {
+      "id": "change-11508e97-edc2-46c9-956a-d1b488549332",
+      "actor": "human",
+      "author": {
+        "kind": "human",
+        "name": "产品"
+      },
+      "kind": "review",
+      "revision": 4,
+      "uxVersion": 1,
+      "at": "2026-11-14T16:16:18.495Z",
+      "summary": "修改修改意见：请把主按钮的准确文案从「保存草稿」修改为「保存并继续」。保留按钮 ID、稳定锚点及现有保存行为。验收：点击「保存并继续」仍显示保存反馈；不要改动商品名称的交互说明。\n\n本轮只调整此按钮文案，其余界面和 PRD 保持原样。",
+      "details": [
+        "修改修改意见：请把主按钮的准确文案从「保存草稿」修改为「保存并继续」。保留按钮 ID、稳定锚点及现有保存行为。验收：点击「保存并继续」仍显示保存反馈；不要改动商品名称的交互说明。\n\n本轮只调整此按钮文案，其余界面和 PRD 保持原样。"
+      ],
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/annotations/ann-demo-rename-save",
+          "before": {
+            "id": "ann-demo-rename-save",
+            "assignee": {
+              "kind": "agent",
+              "name": "AI"
+            },
+            "example": true,
+            "kind": "change-request",
+            "body": "请把主按钮的准确文案从「保存草稿」修改为「保存并继续」。保留按钮 ID、稳定锚点及现有保存行为。验收：点击「保存并继续」仍显示保存反馈；不要改动商品名称的交互说明。",
+            "anchor": {
+              "kind": "element",
+              "id": "demo.save",
+              "selector": "[data-ux-anchor=\"demo.save\"]",
+              "tag": "button",
+              "text": "保存草稿"
+            },
+            "createdBy": {
+              "kind": "human",
+              "name": "示例评审者"
+            },
+            "updatedBy": {
+              "kind": "human",
+              "name": "示例评审者"
+            },
+            "createdAt": "2026-11-14T16:07:51.827Z",
+            "updatedAt": "2026-11-14T16:07:51.827Z",
+            "status": "open"
+          },
+          "value": {
+            "id": "ann-demo-rename-save",
+            "assignee": {
+              "kind": "agent",
+              "name": "AI"
+            },
+            "example": true,
+            "kind": "change-request",
+            "body": "请把主按钮的准确文案从「保存草稿」修改为「保存并继续」。保留按钮 ID、稳定锚点及现有保存行为。验收：点击「保存并继续」仍显示保存反馈；不要改动商品名称的交互说明。\n\n本轮只调整此按钮文案，其余界面和 PRD 保持原样。",
+            "anchor": {
+              "kind": "element",
+              "id": "demo.save",
+              "selector": "[data-ux-anchor=\"demo.save\"]",
+              "tag": "button",
+              "text": "保存草稿"
+            },
+            "createdBy": {
+              "kind": "human",
+              "name": "示例评审者"
+            },
+            "updatedBy": {
+              "kind": "human",
+              "name": "产品"
+            },
+            "createdAt": "2026-11-14T16:07:51.827Z",
+            "updatedAt": "2026-11-14T16:16:18.495Z",
+            "status": "open"
+          }
+        }
+      ],
+      "diff": {
+        "prd": ""
+      }
+    }
+  ],
+  "preferences": {
+    "clearResolvedAfterAgent": false
+  },
+  "design": {
+    "id": "opentiny"
+  }
+}
+</script>
+<!-- ux-document:end -->
+</body>
+</html>

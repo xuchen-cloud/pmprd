@@ -1,0 +1,13 @@
+interface:
+  display_name: "OpenTiny UX 设计"
+  short_description: "保留 OpenTiny 设计原则、组件外观与 AI 视觉，制作可操作的轻量 HTML 原型"
+  default_prompt: "使用 $opentiny-ux，遵循 OpenTiny 设计规范，把我的需求做成可操作的单文件业务 HTML 原型。"
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.svg"
+policy:
+  products:
+  - "chatgpt"
+  - "codex"
+  - "api"
+  - "atlas"
+  allow_implicit_invocation: true

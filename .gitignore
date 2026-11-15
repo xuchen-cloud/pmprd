@@ -1,0 +1,30 @@
+node_modules/
+.DS_Store
+# Local review tasks are durable working data; share the resulting HTML instead.
+.ux-review-*
+
+# User documents, local experiments, verification logs, and release outputs.
+/*.ux.html
+/artifacts/
+/out/
+/release/
+/prototypes/
+/craft-ux-html/
+/docs/HANDOVER-*.md
+/docs/ux-review-*.md
+/docs/ux-review-*.html
+/docs/dsh-*.md
+/docs/dsh-*.html
+
+# Built plugin copies; canonical skills live in /skills.
+/packages/dsh-ux-review/lib/
+/packages/dsh-ux-review/skills/
+*.tgz
+__pycache__/
+*.pyc
+
+# Publish only the synthetic demo, not working copies or customer examples.
+/ux-workbench/examples/*
+!/ux-workbench/examples/README.md
+!/ux-workbench/examples/interaction-demo.ux.html
+/ux-workbench/scripts/create-examples.mjs

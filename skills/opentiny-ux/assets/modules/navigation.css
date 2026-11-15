@@ -1,0 +1,12 @@
+/* OpenTiny NavMenu / TreeMenu defaults. Mobile layout is a prototype adaptation. */
+.ux-topbar{height:48px;padding:0 16px;display:flex;align-items:center;gap:32px;background:#fff;box-shadow:0 1px 4px #00000014;position:relative;z-index:20}
+.ux-brand{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:600;white-space:nowrap;color:var(--ux-text);text-decoration:none}
+.ux-nav{display:flex;align-items:stretch;height:48px;gap:32px}.ux-nav a,.ux-nav button{position:relative;display:flex;align-items:center;height:48px;padding:0;border:0;background:transparent;color:var(--ux-text);text-decoration:none;font-size:14px;white-space:nowrap}
+.ux-nav [aria-current=page],.ux-nav a:hover,.ux-nav button:hover{font-weight:600}.ux-nav [aria-current=page]:after{content:'';height:2px;position:absolute;bottom:0;left:0;right:0;background:var(--ux-primary)}
+.ux-toolbar{margin-left:auto;display:flex;align-items:center;gap:16px}.ux-shell{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:calc(100dvh - 48px)}
+.ux-sidenav{width:220px;background:#fff;border-right:1px solid var(--ux-divider);padding-top:8px}.ux-sidenav a,.ux-sidenav button{position:relative;display:flex;align-items:center;gap:8px;height:32px;width:100%;margin:0 0 4px;padding:0 16px;border:0;border-radius:0;background:transparent;color:var(--ux-text);font-size:14px;line-height:32px;text-decoration:none;text-align:left;white-space:nowrap}
+.ux-sidenav a:hover,.ux-sidenav button:hover{background:#f5f5f5;font-weight:600}.ux-sidenav [aria-current=page]{background:#f5f5f5;font-weight:600}.ux-sidenav [aria-current=page]:before{content:'';position:absolute;left:0;top:0;bottom:0;border-left:2px solid #191919}.ux-sidenav [aria-disabled=true]{color:var(--ux-disabled-text);pointer-events:none}
+.ux-sidenav details summary{padding:4px 16px;cursor:pointer}.ux-sidenav details a{padding-left:32px}.ux-mobile-nav{display:none}
+.ux-breadcrumb{display:flex;align-items:center;gap:4px;font-size:14px;flex-wrap:wrap}.ux-breadcrumb a{color:var(--ux-text);text-decoration:none}.ux-breadcrumb [aria-current]{font-weight:600}.ux-breadcrumb .separator{color:#808080;width:16px;text-align:center;margin:0 4px}
+
+@media(max-width:767px){.ux-topbar{gap:16px}.ux-shell{grid-template-columns:minmax(0,1fr)}.ux-sidenav{display:none;width:220px}.ux-sidenav.is-open{display:block;position:fixed;top:48px;bottom:0;left:0;z-index:19;box-shadow:4px 0 16px #00000014}.ux-mobile-nav{display:inline-flex}.ux-nav{gap:16px}}

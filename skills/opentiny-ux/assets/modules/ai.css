@@ -1,0 +1,12 @@
+.ux-preview-stage{position:relative;min-height:0;flex:1;display:flex;flex-direction:column;background:var(--ux-page)}.ux-preview-scroll{overflow:auto;min-height:0;flex:1;padding:16px 16px 96px;scroll-padding-bottom:96px}.ux-long-image{display:block;width:100%;height:auto;max-width:720px;margin:0 auto;background:#fff}
+.ux-sender{position:absolute;left:24px;right:24px;bottom:20px;min-height:var(--ux-sender-height);display:flex;align-items:center;gap:8px;padding:8px 10px 8px 16px;border:1px solid var(--ux-border);border-radius:8px;background:#fff;box-shadow:0 4px 16px rgba(0,0,0,.08)}.ux-sender input{flex:1;min-width:0;border:0;background:transparent;height:32px}.ux-sender button{min-width:32px;padding:4px 10px}
+/* User-approved AI extension; these are not official OpenTiny tokens. */
+:root{--ux-ai-blue:#3569e8;--ux-ai-purple:#8050ce;--ux-ai-gradient:linear-gradient(120deg,var(--ux-ai-blue),var(--ux-ai-purple));--ux-ai-soft:#f6f3ff}
+.ux-ai-outline,.ux-sender.ux-ai-outline{border:1px solid transparent;background:linear-gradient(#fff,#fff) padding-box,var(--ux-ai-gradient) border-box;color:var(--ux-text)}
+.ux-ai-outline:hover{background:linear-gradient(var(--ux-ai-soft),var(--ux-ai-soft)) padding-box,var(--ux-ai-gradient) border-box}
+/* The sender owns one visible frame; do not add a second ring around its input. */
+.ux-sender input{outline:0}.ux-sender:has(input:focus){border-color:var(--ux-primary)}
+.ux-sender.ux-ai-outline:has(input:focus){border:2px solid transparent;padding:7px 9px 7px 15px}
+.ux-ai-fill{background:var(--ux-ai-gradient);border-color:transparent;color:white}.ux-ai-fill:hover{filter:brightness(.94)}.ux-ai-fill:disabled,.ux-ai-outline:disabled{background:var(--ux-disabled-bg);border-color:#dbdbdb;color:var(--ux-disabled-text);filter:none}
+.ux-ai-spark{width:20px;height:20px;flex:none;vertical-align:middle}.ux-ai-mark{display:grid;place-items:center;width:40px;height:40px;border-radius:8px;background:var(--ux-ai-soft)}
+@media(max-width:767px){.ux-sender{left:12px;right:12px}}

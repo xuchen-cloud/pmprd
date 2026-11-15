@@ -1,0 +1,25 @@
+*{box-sizing:border-box} [hidden]{display:none!important} html{color-scheme:light}
+body{margin:0;background:var(--ux-page);color:var(--ux-text);font:var(--ux-font-md)/var(--ux-line) var(--ux-font)}
+button,input,select,textarea{font:inherit} button{cursor:pointer} button:disabled{cursor:not-allowed}
+a{color:var(--ux-link)}
+/* Keyboard fallback for action controls. Input focus is its existing border, as in OpenTiny Input. */
+:where(a,button,summary,input[type=checkbox],input[type=radio],[tabindex]):focus-visible{outline:2px solid var(--ux-primary);outline-offset:3px}
+h1,h2,h3,p{margin:0} h1,h2,h3{font-weight:var(--ux-weight)} h1{font-size:var(--ux-title-page)} h2{font-size:var(--ux-title-card)} h3{font-size:14px}
+.ux-page{max-width:var(--ux-page-width);margin:auto;padding:32px 24px 96px}
+.ux-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.ux-between{justify-content:space-between}.ux-stack{display:grid;gap:16px}.ux-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.ux-section{padding:24px;background:var(--ux-surface);border-radius:var(--ux-radius-panel)}
+.ux-section>h2{margin-bottom:16px}.ux-muted{color:var(--ux-secondary)}.ux-hint{font-size:12px;color:var(--ux-muted);margin-top:6px}.ux-rule{border:0;border-top:1px solid var(--ux-divider);margin:24px 0}
+.ux-btn{min-width:96px;min-height:var(--ux-control);padding:4px 24px;border:1px solid var(--ux-secondary);border-radius:var(--ux-radius);background:var(--ux-surface);color:var(--ux-text);display:inline-flex;justify-content:center;align-items:center;gap:6px;white-space:nowrap}
+.ux-btn:hover:not(:disabled){border-color:var(--ux-border)}.ux-btn.primary{background:var(--ux-primary);border-color:var(--ux-primary);color:#fff}.ux-btn.primary:hover:not(:disabled){background:var(--ux-primary-hover);border-color:var(--ux-primary-hover)}
+.ux-btn.text{border-color:transparent;background:transparent;color:var(--ux-link);padding:4px 8px;min-width:0}.ux-btn.icon{min-width:32px;padding:4px}.ux-btn.danger{color:var(--ux-error);border-color:var(--ux-error)}
+.ux-btn:disabled{background:var(--ux-disabled-bg);border-color:#dbdbdb;color:var(--ux-disabled-text)}.ux-btn.text:disabled{background:transparent;border-color:transparent}.ux-btn.small{min-height:28px;min-width:72px;padding:2px 16px;font-size:12px}
+.ux-field{display:grid;gap:6px;align-content:start}.ux-field>label,.ux-label{font-weight:600}.ux-required{color:var(--ux-error)}
+.ux-input{width:100%;min-width:0;height:var(--ux-control);padding:0 12px;border:1px solid var(--ux-border);border-radius:var(--ux-radius);background:var(--ux-surface);color:var(--ux-text);outline:0}
+.ux-input:hover,.ux-input:focus{border-color:var(--ux-primary)}.ux-input::placeholder{color:var(--ux-muted)}textarea.ux-input{height:96px;padding:8px 12px;resize:vertical}
+.ux-input:disabled{color:var(--ux-disabled-text);background:var(--ux-disabled-bg);border-color:#dbdbdb}.ux-input[aria-invalid=true]{border-color:var(--ux-error)}.ux-error{color:var(--ux-error);font-size:12px}
+.ux-footer{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--ux-divider);padding:16px 24px;display:flex;align-items:center;justify-content:flex-end;gap:12px;z-index:10}
+.ux-review{font-size:12px;color:var(--ux-muted);margin-top:24px}.ux-review summary{cursor:pointer}.ux-review p{padding-top:8px}
+@media(max-width:767px){.ux-page{padding:20px 16px 110px}.ux-grid{grid-template-columns:1fr}.ux-section{padding:20px}.ux-footer{flex-wrap:wrap}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}

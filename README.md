@@ -1,33 +1,38 @@
-# 前端原型与 PRD 批注 Skill
+# UX / PRD 评审工作台
 
-把已有产品前端抽离成一个可运行的交互原型：保留真实页面和交互，用本地假数据隔离后端，再在右侧关联中文 PRD、研发说明和可定位批注。
+把交互原型、当前 PRD、交互说明、修改意见与变更历史保存在同一份 HTML 中。在 DeepSeek Harness 中评审和修改，也可导出完整 HTML 给同事离线阅读。
 
-适合产品经理制作研发评审原型，也适合编码 Agent 根据 PRD 修改页面。
+当前插件 **dsh-ux-review 0.1.12**，适配 **DSH 0.2.2-rc.3**。发送到 DSH 与复制给外部 Agent 共用直接修改提示词，通过一次 `finish` 完成差异记录和交付。
 
-## 使用
+## 新电脑安装
 
-把本仓库作为 Skill 提供给支持标准 `SKILL.md` 的编码 Agent。核心说明见 [SKILL.md](SKILL.md)，可运行脱敏模板在 [assets/template](assets/template)。
+1. 安装 DSH 0.2.2-rc.3，取得已构建的 `dsh-ux-review-0.1.12.tgz`。
+2. 在 DSH「插件 → 添加插件」填写安装包的本地绝对路径或下载链接。
+3. 安装后点击「立即启用」，按 DSH 提示重启。
+4. 在会话右侧「新建标签页 → 打开设计文档」选择 HTML。
 
-```bash
-node scripts/create-prototype.mjs ./my-prototype
-cd ./my-prototype
-npm install
-npm run dev -- --host 127.0.0.1 --port 7790
+安装包内置 `ux-prototype` 和 `opentiny-ux`，启用插件即加载这两份 skill，无需另外复制。安装、升级与独立 skill 用法见 [分发说明](docs/distribution.md)。源码仓库 ZIP 不是插件安装包；本项目尚未发布 npm 包。
+
+## 开发和打包
+
+需要 Node.js 22+。
+
+```sh
+npm ci --prefix ux-workbench
+npm run release:pack
 ```
 
-打开 `http://127.0.0.1:7790/prd.html#/projects` 查看原型和 PRD 外壳。模板默认是 Baseline 空批注；运行 `npm run demo:annotations` 可以载入批注示例。
+`release/` 包含安装用 `.tgz`、SHA-256 与安装说明。构建在临时工作区完成，不替换已链接到 DSH 的本机插件，也不读取用户稿件。开发入口与验证见 [开发说明](docs/development.md)。
 
-## 评审示例
+| 目录 | 职责 |
+| --- | --- |
+| `packages/dsh-ux-review/` | DSH Host、Client 适配、插件元信息 |
+| `ux-workbench/` | 共用评审界面、离线导出、浏览器测试 |
+| `skills/ux-prototype/` | 单文件协议、CLI、按需读取与 `finish` |
+| `skills/opentiny-ux/` | OpenTiny 设计原则、组件和参考资源 |
+| `docs/` | 开发、分发和版本变更说明 |
+| `assets/template/`、根目录 `SKILL.md` | 保留兼容的早期前端抽离模板 |
 
-下面是同一套原型加载示例 PRD 后的实际页面：左侧可交互，右侧说明背景、目标、范围，并用两条批注对应新建按钮和项目列表。
+用户稿件、任务状态、备份、试验原型和构建副本不纳入 Git。公开示例只保留合成的 [保存/弹窗示例](ux-workbench/examples/interaction-demo.ux.html)。
 
-![项目空间原型与 PRD 批注示例](assets/images/prd-annotated-demo.png)
-
-截图对应的文档在 `assets/template/examples/annotated/`。运行 `npm run demo:annotations` 可在本地切换到该示例；运行 `npm run demo:baseline` 可恢复空白 Baseline。示例只使用本地内存数据。
-
-## 约定
-
-- 保留源前端 UI，不按截图重新绘制。
-- API、登录、支付和写入行为使用本地演示数据，不连接真实后端。
-- PRD 与 Dev Spec 使用 Markdown；页面元素通过 `data-prd` 锚点和 PRD 中的 `{#anchor}` 关联。
-- 这是脱敏模板，不包含任何公司品牌、真实凭据、业务数据或后端实现。
+Windows 尚未实机验证；macOS 已有真实 DSH 修改交付验证。浏览器剪贴板成功、拒绝及重试已覆盖，原生 DSH 剪贴板端到端仍待手动验证。

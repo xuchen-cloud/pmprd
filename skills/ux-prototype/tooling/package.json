@@ -1,0 +1,20 @@
+{
+  "name": "ux-prototype-static-html-tooling",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build-vendor.mjs"
+  },
+  "dependencies": {
+    "css-select": "7.0.0",
+    "marked": "16.4.2",
+    "parse5": "8.1.1",
+    "parse5-htmlparser2-tree-adapter": "8.0.2"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

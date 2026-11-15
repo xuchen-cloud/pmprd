@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenTiny 原生组件交互示例</title>
+<!-- MIT License
+
+Copyright (c) 2022 - present TinyVue Authors.
+Copyright (c) 2022 - present Huawei Cloud Computing Technologies Co., Ltd.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+ -->
+<style>
+:root {
+  --tv-base-color-brand: #191919;
+  --tv-base-color-brand-1: #f0f7ff;
+  --tv-base-color-brand-6: #1476ff;
+  --tv-base-color-common-1: #ffffff;
+  --tv-base-color-common-3: #f5f5f5;
+  --tv-base-color-common-4: #f0f0f0;
+  --tv-base-color-common-7: #c2c2c2;
+  --tv-base-color-common-8: #808080;
+  --tv-base-color-common-9: #595959;
+  --tv-base-color-common-11: #191919;
+  --tv-base-color-success-6: #5cb300;
+  --tv-base-color-success-14: #e6f2d5;
+  --tv-base-color-error-6: #f23030;
+  --tv-base-color-error-13: #fce3e1;
+  --tv-base-color-warn-2: #ffebd1;
+  --tv-base-color-warn-6: #ff8800;
+  --tv-color-success-bg: var(--tv-base-color-success-6);
+  --tv-color-success-bg-light: var(--tv-base-color-success-14);
+  --tv-color-error-bg: var(--tv-base-color-error-6);
+  --tv-color-error-bg-light: var(--tv-base-color-error-13);
+  --tv-color-warn-bg: var(--tv-base-color-warn-6);
+  --tv-color-warn-bg-light: var(--tv-base-color-warn-2);
+  --tv-color-act-primary-bg-hover: var(--tv-base-color-common-9);
+  --tv-color-text: var(--tv-base-color-common-11);
+  --tv-color-text-secondary: var(--tv-base-color-common-9);
+  --tv-color-text-weaken: var(--tv-base-color-common-8);
+  --tv-color-text-disabled: var(--tv-base-color-common-7);
+  --tv-color-text-link: var(--tv-base-color-brand-6);
+  --tv-color-bg: var(--tv-base-color-common-3);
+  --tv-color-bg-primary: var(--tv-base-color-brand);
+  --tv-color-bg-mask: rgba(0, 0, 0, 20%);
+  --tv-color-bg-disabled: var(--tv-base-color-common-4);
+  --tv-color-bg-active-control: var(--tv-base-color-brand-6);
+  --tv-color-bg-3: var(--tv-base-color-common-1);
+  --tv-color-border: var(--tv-base-color-common-7);
+  --tv-color-border-divider: var(--tv-base-color-common-4);
+  --tv-font-family: 'Helvetica', 'Arial', 'PingFangSC-Regular', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', 'Microsoft JhengHei';
+  --tv-font-size-sm: 12px;
+  --tv-font-size-md: 14px;
+  --tv-font-size-heading-xs: 16px;
+  --tv-font-size-heading-sm: 18px;
+  --tv-font-size-heading-md: 20px;
+  --tv-line-height-number: 1.5;
+  --tv-font-weight-bold: 600;
+  --tv-border-radius-sm: 4px;
+  --tv-border-radius-md: 6px;
+  --tv-border-radius-lg: 8px;
+  --tv-space-base: 4px;
+  --tv-space-xs: 2px;
+  --tv-space-sm: var(--tv-space-base);
+  --tv-space-md: calc(var(--tv-space-base) * 2);
+  --tv-space-lg: calc(var(--tv-space-base) * 3);
+  --tv-space-xl: calc(var(--tv-space-base) * 4);
+  --tv-space-xxl: calc(var(--tv-space-base) * 6);
+  --tv-space-xxxl: calc(var(--tv-space-base) * 8);
+  --tv-size-height-xs: 24px;
+  --tv-size-height-sm: 28px;
+  --tv-size-height-md: 32px;
+  --tv-size-height-lg: 40px;
+  --tv-size-height-xl: 48px;
+  --tv-shadow-4-down: 0 8px 24px 0 rgba(0, 0, 0, 0.16);
+  --tv-shadow-4-left: -8px 0 24px 0 rgba(0, 0, 0, 0.16);
+}
+/* Convenience aliases to the complete OpenTiny token system. Exact sources and MIT notice: references/sources.md. */
+:root {
+  --ux-primary:var(--tv-color-bg-primary); --ux-primary-hover:var(--tv-color-act-primary-bg-hover);
+  --ux-link:var(--tv-color-text-link); --ux-selected:var(--tv-color-bg-active-control); --ux-selected-bg:var(--tv-base-color-brand-1);
+  --ux-text:var(--tv-color-text); --ux-secondary:var(--tv-color-text-secondary); --ux-muted:var(--tv-color-text-weaken);
+  --ux-page:var(--tv-color-bg); --ux-surface:var(--tv-color-bg-3); --ux-border:var(--tv-color-border); --ux-divider:var(--tv-color-border-divider);
+  --ux-disabled-bg:var(--tv-color-bg-disabled); --ux-disabled-text:var(--tv-color-text-disabled);
+  --ux-success:var(--tv-color-success-bg); --ux-warning:var(--tv-color-warn-bg); --ux-error:var(--tv-color-error-bg);
+  --ux-success-bg:var(--tv-color-success-bg-light); --ux-warning-bg:var(--tv-color-warn-bg-light); --ux-error-bg:var(--tv-color-error-bg-light);
+  --ux-mask:var(--tv-color-bg-mask);
+  --ux-font:var(--tv-font-family),sans-serif;
+  --ux-font-sm:var(--tv-font-size-sm); --ux-font-md:var(--tv-font-size-md); --ux-title-card:var(--tv-font-size-heading-xs); --ux-title-page:var(--tv-font-size-heading-sm); --ux-title-dialog:var(--tv-font-size-heading-md);
+  --ux-line:var(--tv-line-height-number); --ux-weight:var(--tv-font-weight-bold);
+  --ux-radius:var(--tv-border-radius-md); --ux-radius-panel:var(--tv-border-radius-lg); --ux-radius-small:var(--tv-border-radius-sm);
+  --ux-control:var(--tv-size-height-md); --ux-control-sm:var(--tv-size-height-sm); --ux-control-lg:var(--tv-size-height-lg);
+  --ux-gap-1:var(--tv-space-sm); --ux-gap-2:var(--tv-space-md); --ux-gap-3:var(--tv-space-lg); --ux-gap-4:var(--tv-space-xl); --ux-gap-5:var(--tv-space-xxl); --ux-gap-6:var(--tv-space-xxxl);
+  --ux-shadow-panel:var(--tv-shadow-4-down);
+  --ux-shadow-drawer:var(--tv-shadow-4-left);
+  --ux-gap-xs:var(--tv-space-xs); --ux-control-xs:var(--tv-size-height-xs); --ux-control-xl:var(--tv-size-height-xl);
+  /* Prototype layout values, not upstream mandates. */
+  --ux-page-width:1200px; --ux-dialog-width:560px; --ux-drawer-width:880px; --ux-sender-height:48px;
+}
+
+*{box-sizing:border-box} [hidden]{display:none!important} html{color-scheme:light}
+body{margin:0;background:var(--ux-page);color:var(--ux-text);font:var(--ux-font-md)/var(--ux-line) var(--ux-font)}
+button,input,select,textarea{font:inherit} button{cursor:pointer} button:disabled{cursor:not-allowed}
+a{color:var(--ux-link)}
+/* Keyboard fallback for action controls. Input focus is its existing border, as in OpenTiny Input. */
+:where(a,button,summary,input[type=checkbox],input[type=radio],[tabindex]):focus-visible{outline:2px solid var(--ux-primary);outline-offset:3px}
+h1,h2,h3,p{margin:0} h1,h2,h3{font-weight:var(--ux-weight)} h1{font-size:var(--ux-title-page)} h2{font-size:var(--ux-title-card)} h3{font-size:14px}
+.ux-page{max-width:var(--ux-page-width);margin:auto;padding:32px 24px 96px}
+.ux-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.ux-between{justify-content:space-between}.ux-stack{display:grid;gap:16px}.ux-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.ux-section{padding:24px;background:var(--ux-surface);border-radius:var(--ux-radius-panel)}
+.ux-section>h2{margin-bottom:16px}.ux-muted{color:var(--ux-secondary)}.ux-hint{font-size:12px;color:var(--ux-muted);margin-top:6px}.ux-rule{border:0;border-top:1px solid var(--ux-divider);margin:24px 0}
+.ux-btn{min-width:96px;min-height:var(--ux-control);padding:4px 24px;border:1px solid var(--ux-secondary);border-radius:var(--ux-radius);background:var(--ux-surface);color:var(--ux-text);display:inline-flex;justify-content:center;align-items:center;gap:6px;white-space:nowrap}
+.ux-btn:hover:not(:disabled){border-color:var(--ux-border)}.ux-btn.primary{background:var(--ux-primary);border-color:var(--ux-primary);color:#fff}.ux-btn.primary:hover:not(:disabled){background:var(--ux-primary-hover);border-color:var(--ux-primary-hover)}
+.ux-btn.text{border-color:transparent;background:transparent;color:var(--ux-link);padding:4px 8px;min-width:0}.ux-btn.icon{min-width:32px;padding:4px}.ux-btn.danger{color:var(--ux-error);border-color:var(--ux-error)}
+.ux-btn:disabled{background:var(--ux-disabled-bg);border-color:#dbdbdb;color:var(--ux-disabled-text)}.ux-btn.text:disabled{background:transparent;border-color:transparent}.ux-btn.small{min-height:28px;min-width:72px;padding:2px 16px;font-size:12px}
+.ux-field{display:grid;gap:6px;align-content:start}.ux-field>label,.ux-label{font-weight:600}.ux-required{color:var(--ux-error)}
+.ux-input{width:100%;min-width:0;height:var(--ux-control);padding:0 12px;border:1px solid var(--ux-border);border-radius:var(--ux-radius);background:var(--ux-surface);color:var(--ux-text);outline:0}
+.ux-input:hover,.ux-input:focus{border-color:var(--ux-primary)}.ux-input::placeholder{color:var(--ux-muted)}textarea.ux-input{height:96px;padding:8px 12px;resize:vertical}
+.ux-input:disabled{color:var(--ux-disabled-text);background:var(--ux-disabled-bg);border-color:#dbdbdb}.ux-input[aria-invalid=true]{border-color:var(--ux-error)}.ux-error{color:var(--ux-error);font-size:12px}
+.ux-footer{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--ux-divider);padding:16px 24px;display:flex;align-items:center;justify-content:flex-end;gap:12px;z-index:10}
+.ux-review{font-size:12px;color:var(--ux-muted);margin-top:24px}.ux-review summary{cursor:pointer}.ux-review p{padding-top:8px}
+@media(max-width:767px){.ux-page{padding:20px 16px 110px}.ux-grid{grid-template-columns:1fr}.ux-section{padding:20px}.ux-footer{flex-wrap:wrap}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* module: choice */
+.ux-choice-group{border:0;margin:0;padding:0;min-width:0}.ux-choice-group legend{font-weight:600;margin-bottom:12px}.ux-choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.ux-choice{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--ux-border);border-radius:6px;padding:16px;cursor:pointer}.ux-choice:has(input:checked){border-color:var(--ux-selected);background:var(--ux-selected-bg)}
+.ux-choice input{accent-color:var(--ux-selected);margin-top:4px}.ux-choice small{display:block;color:var(--ux-secondary);margin-top:4px}.ux-choice .selected-label{display:none;font-size:12px;color:var(--ux-link)}.ux-choice:has(input:checked) .selected-label{display:inline}
+input[type=checkbox],input[type=radio]{accent-color:var(--ux-selected)}
+.ux-switch{display:inline-flex;align-items:center;gap:8px}.ux-switch input{appearance:none;-webkit-appearance:none;width:40px;height:20px;flex:none;padding:0;border:0;background:var(--ux-border);border-radius:15px;position:relative;cursor:pointer;margin:0;outline:0}.ux-switch input:before{content:'';position:absolute;width:16px;height:16px;top:2px;left:2px;border-radius:50%;background:#fff}.ux-switch input:checked{background:var(--ux-selected)}.ux-switch input:checked:before{left:22px}
+.ux-switch.mini input{width:32px;height:16px}.ux-switch.mini input:before{width:12px;height:12px}.ux-switch.mini input:checked:before{left:18px}
+.ux-switch input:disabled{background:var(--tv-color-bg-disabled-control-unactive,#dbdbdb);cursor:not-allowed}.ux-switch input:disabled:checked{background:var(--tv-color-bg-disabled-control-active,#b3d6ff)}.ux-switch:has(input:disabled){color:var(--ux-disabled-text);cursor:not-allowed}.ux-switch input:focus-visible{outline:2px solid var(--ux-selected);outline-offset:1px}
+/* Native radio semantics, OpenTiny Radio 16px outer / 8px inner. Keyboard-only focus. */
+.ux-radio{appearance:none;-webkit-appearance:none;display:inline-grid;place-content:center;width:16px;height:16px;padding:0;margin:2px 0 0;flex:none;border:1px solid var(--ux-border,#c2c2c2);border-radius:50%;background:#fff;cursor:pointer;vertical-align:middle}.ux-radio:after{content:'';width:8px;height:8px;border-radius:50%;background:var(--ux-selected,#1476ff);transform:scale(0)}.ux-radio:checked{border-color:var(--ux-selected,#1476ff)}.ux-radio:checked:after{transform:scale(1)}.ux-radio:hover:not(:checked):not(:disabled){border-color:var(--ux-primary,#191919)}.ux-radio:disabled{cursor:not-allowed;background:#f0f0f0;border-color:#dbdbdb}.ux-radio:disabled:after{background:#dbdbdb}.ux-radio:disabled:checked{background:#fff}.ux-radio:focus-visible{outline:2px solid var(--ux-primary,#191919);outline-offset:3px}
+
+.ux-choice:focus-within{outline:none}.ux-choice .ux-radio:focus-visible{outline:2px solid var(--ux-primary);outline-offset:3px}
+
+@media(max-width:767px){.ux-choice-grid{grid-template-columns:1fr}}
+
+/* module: tabs */
+.ux-tabs{display:flex;gap:32px;border-bottom:1px solid var(--ux-divider)}.ux-tabs [role=tab]{display:inline-flex;align-items:center;justify-content:center;height:48px;background:none;border:0;padding:0;color:var(--ux-secondary);border-bottom:2px solid transparent}.ux-tabs [aria-selected=true]{color:var(--ux-text);font-weight:600;border-bottom-color:var(--ux-primary)}.ux-tabs [role=tab]:disabled,.ux-tabs [role=tab][aria-disabled=true]{color:var(--ux-disabled-text);cursor:not-allowed}
+
+/* module: feedback */
+.ux-tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;background:var(--ux-page);font-size:12px}.ux-tag.success{background:var(--ux-success-bg)}.ux-tag.warning{background:var(--ux-warning-bg)}.ux-tag.error{background:var(--ux-error-bg)}
+.ux-alert{padding:12px 16px;background:var(--ux-selected-bg);border-radius:6px;color:var(--ux-text)}.ux-alert.error{background:var(--ux-error-bg)}.ux-alert.warning{background:var(--ux-warning-bg)}
+.ux-empty{text-align:center;padding:48px 20px;color:var(--ux-secondary);background:#fafafa;border-radius:6px}.ux-empty p{margin:8px 0 16px}
+.ux-skeleton{background:linear-gradient(100deg,#f0f0f0 25%,#fafafa 45%,#f0f0f0 65%);background-size:250% 100%;animation:ux-shimmer 1.5s infinite;border-radius:6px;min-height:20px}.ux-skeleton.hero{height:240px}.ux-skeleton.line{height:16px;margin:16px 0}
+@keyframes ux-shimmer{to{background-position:-200% 0}}
+.ux-toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);max-width:calc(100vw - 32px);background:var(--ux-primary);color:white;padding:10px 20px;border-radius:6px;box-shadow:var(--ux-shadow-panel);z-index:5000;pointer-events:none}
+.ux-popover{position:relative;display:inline-block}.ux-popover>summary{cursor:pointer;list-style:none}.ux-popover-panel{position:absolute;z-index:30;top:calc(100% + 8px);left:0;width:260px;max-width:calc(100vw - 32px);padding:12px 16px;border-radius:8px;background:#fff;box-shadow:0 2px 12px #00000029;color:var(--ux-secondary)}.ux-popover-panel h3{font-size:16px;color:var(--ux-text);margin-bottom:8px}.ux-notify{position:fixed;right:24px;top:64px;z-index:100;max-width:min(340px,calc(100vw - 32px));padding:16px;background:#fff;border-radius:8px;box-shadow:0 2px 12px #00000029}.ux-notify h3{font-size:16px;margin-bottom:8px}
+.ux-popover-panel.align-end{left:auto;right:0}
+
+/* module: table */
+.ux-table-wrap{overflow-x:auto}.ux-table{border-collapse:collapse;width:100%;text-align:left}.ux-table th{background:var(--ux-page);font-weight:600}.ux-table th,.ux-table td{padding:12px 16px;border-bottom:1px solid var(--ux-divider)}.ux-table tr:hover td{background:#fafafa}.ux-pagination{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:16px}
+@media(max-width:767px){.ux-table th,.ux-table td{padding:10px}}
+
+/* module: dialog */
+.ux-dialog{border:0;border-radius:8px;width:min(var(--ux-dialog-width),calc(100vw - 32px));max-height:calc(100dvh - 32px);padding:0;box-shadow:var(--ux-shadow-panel);color:var(--ux-text)}
+.ux-dialog::backdrop{background:var(--ux-mask)}.ux-dialog[open]{display:flex;flex-direction:column}.ux-dialog-head{padding:24px 32px 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex:none}.ux-dialog-head h2{font-size:20px}
+.ux-dialog-body{padding:8px 32px 24px;overflow:auto;min-height:0;flex:1}.ux-dialog-foot{display:flex;justify-content:flex-end;gap:8px;padding:16px 32px 24px;flex:none}
+.ux-drawer{margin:0 0 0 auto;width:min(var(--ux-drawer-width),100vw);max-width:100vw;height:100dvh;max-height:100dvh;border-radius:4px 0 0 4px;box-shadow:var(--ux-shadow-drawer)}.ux-drawer .ux-dialog-head{border-bottom:1px solid var(--ux-divider)}.ux-drawer .ux-dialog-foot{border-top:1px solid var(--ux-divider);padding:16px 24px}
+@media(max-width:767px){.ux-dialog-head{padding:20px 20px 12px}.ux-dialog-body{padding:8px 20px 20px}.ux-dialog-foot{padding:16px 20px}}
+
+/* module: upload */
+.ux-dropzone{border:1px dashed var(--ux-border);border-radius:6px;background:#fafafa;padding:24px;text-align:center}.ux-dropzone.dragging{border-color:var(--ux-selected);background:var(--ux-selected-bg)}.ux-file-list{padding:0;list-style:none}.ux-file-list li{padding:8px 0;border-bottom:1px solid var(--ux-divider);display:flex;justify-content:space-between;gap:12px;overflow-wrap:anywhere}
+
+/* module: navigation */
+/* OpenTiny NavMenu / TreeMenu defaults. Mobile layout is a prototype adaptation. */
+.ux-topbar{height:48px;padding:0 16px;display:flex;align-items:center;gap:32px;background:#fff;box-shadow:0 1px 4px #00000014;position:relative;z-index:20}
+.ux-brand{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:600;white-space:nowrap;color:var(--ux-text);text-decoration:none}
+.ux-nav{display:flex;align-items:stretch;height:48px;gap:32px}.ux-nav a,.ux-nav button{position:relative;display:flex;align-items:center;height:48px;padding:0;border:0;background:transparent;color:var(--ux-text);text-decoration:none;font-size:14px;white-space:nowrap}
+.ux-nav [aria-current=page],.ux-nav a:hover,.ux-nav button:hover{font-weight:600}.ux-nav [aria-current=page]:after{content:'';height:2px;position:absolute;bottom:0;left:0;right:0;background:var(--ux-primary)}
+.ux-toolbar{margin-left:auto;display:flex;align-items:center;gap:16px}.ux-shell{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:calc(100dvh - 48px)}
+.ux-sidenav{width:220px;background:#fff;border-right:1px solid var(--ux-divider);padding-top:8px}.ux-sidenav a,.ux-sidenav button{position:relative;display:flex;align-items:center;gap:8px;height:32px;width:100%;margin:0 0 4px;padding:0 16px;border:0;border-radius:0;background:transparent;color:var(--ux-text);font-size:14px;line-height:32px;text-decoration:none;text-align:left;white-space:nowrap}
+.ux-sidenav a:hover,.ux-sidenav button:hover{background:#f5f5f5;font-weight:600}.ux-sidenav [aria-current=page]{background:#f5f5f5;font-weight:600}.ux-sidenav [aria-current=page]:before{content:'';position:absolute;left:0;top:0;bottom:0;border-left:2px solid #191919}.ux-sidenav [aria-disabled=true]{color:var(--ux-disabled-text);pointer-events:none}
+.ux-sidenav details summary{padding:4px 16px;cursor:pointer}.ux-sidenav details a{padding-left:32px}.ux-mobile-nav{display:none}
+.ux-breadcrumb{display:flex;align-items:center;gap:4px;font-size:14px;flex-wrap:wrap}.ux-breadcrumb a{color:var(--ux-text);text-decoration:none}.ux-breadcrumb [aria-current]{font-weight:600}.ux-breadcrumb .separator{color:#808080;width:16px;text-align:center;margin:0 4px}
+
+@media(max-width:767px){.ux-topbar{gap:16px}.ux-shell{grid-template-columns:minmax(0,1fr)}.ux-sidenav{display:none;width:220px}.ux-sidenav.is-open{display:block;position:fixed;top:48px;bottom:0;left:0;z-index:19;box-shadow:4px 0 16px #00000014}.ux-mobile-nav{display:inline-flex}.ux-nav{gap:16px}}
+
+
+</style>
+</head>
+<body>
+<header class="ux-topbar"><div class="ux-row ux-between"><strong>UX 交互组件参考</strong><span class="ux-tag">OpenTiny Design</span></div></header>
+<main class="ux-page ux-stack">
+<div><h1>用于产品评审的轻量组件</h1><p class="ux-muted" style="margin-top:8px">统一视觉规范，用真实状态变化说明交互。点击按钮、填写表单或打开弹窗试用。</p></div>
+<nav class="ux-row" aria-label="样张目录"><a href="#controls">输入与选择</a><a href="#table">列表与详情</a><a href="#uploads">上传资料</a><a href="#feedback">生成与反馈</a></nav>
+<section id="controls" class="ux-section ux-stack"><h2>输入与选择</h2>
+<div class="ux-row"><button class="ux-btn primary" id="primaryDemo">主要操作</button><button class="ux-btn" id="secondaryDemo">次要操作</button><button class="ux-btn text" id="textDemo">文字操作</button><button class="ux-btn" disabled>禁用操作</button><span class="ux-muted">默认 32px 高 · 6px 圆角</span></div>
+<form id="sampleForm" class="ux-grid" novalidate>
+<div class="ux-field"><label for="productName">商品名称 <span class="ux-required">*</span></label><input class="ux-input" id="productName" placeholder="请输入商品名称" required aria-describedby="nameError"><p class="ux-error" id="nameError" hidden>请输入商品名称</p></div>
+<div class="ux-field"><label for="productType">商品类型</label><select class="ux-input" id="productType"><option>专业服务</option><option>SaaS</option><option>License</option></select></div>
+<div class="ux-field"><label for="productDesc">商品简介</label><textarea class="ux-input" id="productDesc" placeholder="说明核心能力与适用场景"></textarea></div>
+<div class="ux-stack"><label class="ux-switch"><input type="checkbox" role="switch" id="notify" checked><span>接收处理通知</span></label><label><input type="checkbox" id="agree"> 我已确认所填商品信息</label><p id="agreeError" class="ux-error" hidden>请先确认商品信息</p><div><button class="ux-btn primary" type="submit">保存信息</button></div></div>
+</form>
+<fieldset class="ux-choice-group"><legend>商品详情展示方式</legend><div class="ux-choice-grid"><label class="ux-choice"><input type="radio" class="ux-radio" name="format" value="图文详情" checked><span><strong>图文详情</strong> <span class="selected-label">发布时使用</span><small>手动编辑文字、图片和表格</small></span></label><label class="ux-choice"><input type="radio" class="ux-radio" name="format" value="AI 长图详情"><span><strong>AI 长图详情</strong> <span class="selected-label">发布时使用</span><small>通过指令生成、修改整张长图</small></span></label></div></fieldset><p id="formatSummary" role="status" class="ux-muted">发布后将展示图文详情。</p>
+</section>
+<section id="table" class="ux-section"><div class="ux-row ux-between"><h2>列表与详情</h2><label class="ux-row" for="search">商品名称<input id="search" class="ux-input" style="width:220px" placeholder="搜索商品"></label></div><div class="ux-table-wrap" style="margin-top:16px"><table class="ux-table"><thead><tr><th scope="col">商品名称</th><th scope="col">商品类型</th><th scope="col">状态</th><th scope="col">操作</th></tr></thead><tbody id="rows"></tbody></table></div><div id="noResults" class="ux-empty" hidden><strong>暂无匹配商品</strong><p>调整搜索条件后重试。</p><button class="ux-btn" id="clearSearch">清空搜索</button></div><div class="ux-pagination"><span id="pageText"></span><button class="ux-btn small" id="prev">上一页</button><button class="ux-btn small" id="next">下一页</button></div></section>
+<section id="uploads" class="ux-section ux-stack"><h2>上传资料</h2><div class="ux-row ux-between"><div><p>商品资料</p><p class="ux-hint">选择文件后查看列表，确认后应用到当前页面。</p></div><button class="ux-btn" id="openFiles">添加资料</button></div><ul class="ux-file-list" id="appliedFiles"><li>尚未添加资料</li></ul></section>
+<section id="feedback" class="ux-section ux-stack"><h2>生成与反馈</h2><div class="ux-row"><button class="ux-btn primary" id="generate">生成预览</button><button class="ux-btn" id="stop" disabled>停止生成</button><span class="ux-tag success">已完成</span><span class="ux-tag warning">待处理</span><span class="ux-tag error">需修改</span></div><div id="generationResult" aria-live="polite"><div class="ux-empty">点击“生成预览”体验加载与完成状态。</div></div>
+<details class="ux-review"><summary>原型说明与演示状态</summary><p>本页为离线交互样张。文件仅在当前页面演示选择；保存、处理和 AI 生成使用本地模拟数据。</p><label><input type="checkbox" id="failNext"> 下一次生成演示失败</label></details>
+</section>
+</main>
+<dialog id="fileDialog" class="ux-dialog" aria-labelledby="fileTitle"><header class="ux-dialog-head"><h2 id="fileTitle">添加商品资料</h2><button class="ux-btn text icon" data-close aria-label="关闭资料弹窗">×</button></header><div class="ux-dialog-body ux-stack"><div class="ux-dropzone" id="drop"><p>拖拽文件到这里，或选择文件</p><p class="ux-hint">PDF、Word、TXT；每个不超过 20MB，最多 10 个</p><button type="button" class="ux-btn" id="pickFiles" style="margin-top:12px">选择文件</button><input id="files" type="file" accept=".pdf,.doc,.docx,.txt" multiple hidden></div><p class="ux-alert error" id="fileError" role="alert" hidden></p><ul class="ux-file-list" id="draftFiles"></ul></div><footer class="ux-dialog-foot"><button class="ux-btn" data-close>取消</button><button class="ux-btn primary" id="applyFiles">确认添加</button></footer></dialog>
+<dialog id="detailDialog" class="ux-dialog ux-drawer" aria-labelledby="detailTitle" style="--ux-drawer-width:600px"><header class="ux-dialog-head"><h2 id="detailTitle">商品详情</h2><button class="ux-btn text icon" data-close aria-label="关闭详情">×</button></header><div class="ux-dialog-body ux-stack"><div class="ux-tabs" role="tablist" aria-label="详情内容"><button role="tab" id="tabInfo" aria-controls="panelInfo" aria-selected="true">基本信息</button><button role="tab" id="tabNotes" aria-controls="panelNotes" aria-selected="false" tabindex="-1">处理记录</button></div><section id="panelInfo" role="tabpanel" aria-labelledby="tabInfo"><h3 id="detailName"></h3><p id="detailType" class="ux-muted" style="margin-top:8px"></p><p id="detailStatus" style="margin-top:16px"></p></section><section id="panelNotes" role="tabpanel" aria-labelledby="tabNotes" hidden><p id="detailNotes">暂无处理记录</p></section></div><footer class="ux-dialog-foot"><button class="ux-btn" data-close>关闭</button><button class="ux-btn primary" id="complete">标记完成</button></footer></dialog>
+
+<script>
+/* Optional tiny helpers. No network requests or persistence. */
+window.UX = (() => {
+  const dialogOrigins = new WeakMap();
+  const dialogStack = [];
+  let savedOverflow, scrollLocked = false;
+  let toastTimer;
+  const q = (s, root = document) => root.querySelector(s);
+  const topModal = () => [...dialogStack].reverse().find(dialog => dialog.open && dialog.matches(':modal')) || [...document.querySelectorAll('dialog:modal')].at(-1);
+  function register(dialog) {
+    const index = dialogStack.indexOf(dialog);
+    if (index >= 0) dialogStack.splice(index, 1);
+    dialogStack.push(dialog);
+  }
+  function toast(message) {
+    let el = document.getElementById('ux-toast');
+    if (!el) { el = document.createElement('div'); el.id = 'ux-toast'; el.className = 'ux-toast'; el.setAttribute('role', 'status'); document.body.append(el); }
+    // Native modal dialogs live in the top layer, so place feedback inside the active dialog.
+    const modal = topModal();
+    (modal || document.body).append(el);
+    el.textContent = message; el.hidden = false;
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => { el.hidden = true; }, 2800);
+  }
+  function open(dialog, focusSelector) {
+    if (dialog.open) return;
+    dialogOrigins.set(dialog, document.activeElement);
+    dialog.showModal(); register(dialog);
+    if (!scrollLocked) { savedOverflow = document.documentElement.style.overflow; scrollLocked = true; }
+    document.documentElement.style.overflow = 'hidden';
+    if (focusSelector) q(focusSelector, dialog)?.focus();
+  }
+  function close(dialog) { dialog.close(); }
+  // Native showModal order, rather than document order, determines the top layer.
+  document.addEventListener('beforetoggle', event => {
+    if (event.target instanceof HTMLDialogElement && event.newState === 'open') register(event.target);
+  }, true);
+  document.addEventListener('close', event => {
+    const dialog = event.target;
+    if (!(dialog instanceof HTMLDialogElement)) return;
+    const index = dialogStack.indexOf(dialog);
+    if (index >= 0) dialogStack.splice(index, 1);
+    const modal = topModal();
+    if (!modal && scrollLocked) { document.documentElement.style.overflow = savedOverflow; scrollLocked = false; }
+    const origin = dialogOrigins.get(dialog);
+    if (origin?.isConnected && (!modal || modal.contains(origin))) origin.focus();
+  }, true);
+  document.addEventListener('click', event => {
+    const btn = event.target.closest('[data-close]');
+    if (btn) btn.closest('dialog')?.close();
+  });
+  // Keep keyboard navigation explicitly within the topmost modal.
+  document.addEventListener('keydown', event => {
+    if (event.key !== 'Tab') return;
+    const modal = topModal();
+    if (!modal) return;
+    const items = [...modal.querySelectorAll('button, input:not([type=hidden]), select, textarea, a[href], summary, [contenteditable=true], [tabindex]')].filter(el => el.tabIndex >= 0 && !el.matches(':disabled') && !el.closest('[inert]') && el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden').sort((a,b) => (a.tabIndex || Infinity) - (b.tabIndex || Infinity));
+    const first = items[0], last = items.at(-1);
+    if (!first) { event.preventDefault(); modal.focus(); return; }
+    if (!modal.contains(document.activeElement)) { event.preventDefault(); (event.shiftKey ? last : first).focus(); }
+    else if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+  });
+  const escapeHTML = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function job() {
+    let timer, revision = 0;
+    return {
+      cancel() { revision++; clearTimeout(timer); },
+      run(callback, delay = 1600) { this.cancel(); const id = revision; timer = setTimeout(() => { if (revision === id) callback(); }, delay); }
+    };
+  }
+  return {q, toast, open, close, escapeHTML, job};
+})();
+
+const $ = UX.q;
+['primaryDemo','secondaryDemo','textDemo'].forEach(id=>$('#'+id).onclick=()=>UX.toast('已触发'+$('#'+id).textContent));
+$('#sampleForm').onsubmit=e=>{e.preventDefault();const empty=!$('#productName').value.trim(),unchecked=!$('#agree').checked;$('#nameError').hidden=!empty;$('#productName').setAttribute('aria-invalid',String(empty));$('#agreeError').hidden=!unchecked;if(empty){$('#productName').focus();return}if(unchecked){$('#agree').focus();return}const item={id:Date.now(),name:$('#productName').value.trim(),type:$('#productType').value,status:'待处理',notes:'已保存商品信息'};items.unshift(item);$('#search').value='';page=1;renderRows();UX.toast('商品信息已保存至下方列表')};
+document.querySelectorAll('[name=format]').forEach(input=>input.onchange=()=>{$('#formatSummary').textContent='发布后将展示'+input.value+'。'});
+const items=[{id:1,name:'DataPilot 智能数据分析平台',type:'SaaS',status:'待处理',notes:'暂无处理记录'},{id:2,name:'企业迁移咨询服务',type:'专业服务',status:'待处理',notes:'暂无处理记录'},{id:3,name:'应用安全检测',type:'专业服务',status:'已完成',notes:'已完成内容复核'},{id:4,name:'数据备份软件',type:'License',status:'待处理',notes:'暂无处理记录'},{id:5,name:'运营分析看板',type:'SaaS',status:'已完成',notes:'已完成内容复核'}];let page=1,activeId=null;
+function renderRows(){const matches=items.filter(x=>x.name.includes($('#search').value.trim())),pages=Math.max(1,Math.ceil(matches.length/3));page=Math.min(page,pages);$('#rows').innerHTML=matches.slice((page-1)*3,page*3).map(x=>`<tr><td>${UX.escapeHTML(x.name)}</td><td>${x.type}</td><td><span class="ux-tag ${x.status==='已完成'?'success':'warning'}">${x.status}</span></td><td><button class="ux-btn text" data-detail="${x.id}">查看详情</button></td></tr>`).join('');$('#noResults').hidden=!!matches.length;$('#pageText').textContent=`共 ${matches.length} 项 · 第 ${page} / ${pages} 页`;$('#prev').disabled=page<=1;$('#next').disabled=page>=pages}
+$('#search').oninput=()=>{page=1;renderRows()};$('#prev').onclick=()=>{page--;renderRows()};$('#next').onclick=()=>{page++;renderRows()};$('#clearSearch').onclick=()=>{$('#search').value='';page=1;renderRows()};
+function tab(which){const info=which==='Info';['Info','Notes'].forEach(name=>{const active=name===which;$('#tab'+name).setAttribute('aria-selected',String(active));$('#tab'+name).tabIndex=active?0:-1;$('#panel'+name).hidden=!active})}
+['Info','Notes'].forEach(name=>{$('#tab'+name).onclick=()=>tab(name);$('#tab'+name).onkeydown=e=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){e.preventDefault();const target=e.key==='Home'?'Info':e.key==='End'?'Notes':name==='Info'?'Notes':'Info';tab(target);$('#tab'+target).focus()}}});
+$('#rows').onclick=e=>{const b=e.target.closest('[data-detail]');if(!b)return;activeId=Number(b.dataset.detail);const item=items.find(x=>x.id===activeId);$('#detailName').textContent=item.name;$('#detailType').textContent='商品类型：'+item.type;$('#detailStatus').textContent='当前状态：'+item.status;$('#detailNotes').textContent=item.notes;$('#complete').disabled=item.status==='已完成';tab('Info');UX.open($('#detailDialog'))};
+$('#complete').onclick=()=>{const item=items.find(x=>x.id===activeId);item.status='已完成';item.notes='已完成内容复核';renderRows();UX.close($('#detailDialog'));UX.toast('已更新商品处理状态')};renderRows();
+let savedFiles=[],draftFiles=[];
+function renderFiles(){const list=$('#draftFiles');list.replaceChildren();draftFiles.forEach((f,index)=>{const li=document.createElement('li'),span=document.createElement('span'),button=document.createElement('button');span.textContent=f.name+' · '+(f.size/1024).toFixed(1)+' KB';button.type='button';button.className='ux-btn text';button.textContent='移除';button.setAttribute('aria-label','移除 '+f.name);button.onclick=()=>{draftFiles.splice(index,1);renderFiles()};li.append(span,button);list.append(li)});$('#applyFiles').disabled=!draftFiles.length}
+function addFiles(files){let errors=[];for(const f of files){if(!/\.(pdf|docx?|txt)$/i.test(f.name)){errors.push(f.name+'：请选择 PDF、Word 或 TXT');continue}if(f.size>20*1024*1024){errors.push(f.name+'：超过 20MB');continue}if(draftFiles.length>=10){errors.push('最多添加 10 个文件');break}if(draftFiles.some(x=>x.name===f.name&&x.size===f.size)){errors.push(f.name+'：已添加');continue}draftFiles.push({name:f.name,size:f.size})}$('#fileError').hidden=!errors.length;$('#fileError').textContent=errors.join('；');renderFiles()}
+$('#openFiles').onclick=()=>{draftFiles=savedFiles.map(x=>({...x}));$('#fileError').hidden=true;renderFiles();UX.open($('#fileDialog'),'#pickFiles')};$('#pickFiles').onclick=()=>$('#files').click();$('#files').onchange=()=>{addFiles($('#files').files);$('#files').value=''};
+$('#drop').ondragover=e=>{e.preventDefault();$('#drop').classList.add('dragging')};$('#drop').ondragleave=()=>$('#drop').classList.remove('dragging');$('#drop').ondrop=e=>{e.preventDefault();$('#drop').classList.remove('dragging');addFiles(e.dataTransfer.files)};
+$('#applyFiles').onclick=()=>{savedFiles=draftFiles.map(x=>({...x}));$('#appliedFiles').replaceChildren();savedFiles.forEach(f=>{const li=document.createElement('li');li.textContent=f.name;$('#appliedFiles').append(li)});UX.close($('#fileDialog'));UX.toast('已添加 '+savedFiles.length+' 份资料')};
+const task=UX.job();let busy=false;
+function setBusy(value){busy=value;$('#generate').disabled=value;$('#stop').disabled=!value;$('#generationResult').setAttribute('aria-busy',String(value))}
+$('#generate').onclick=()=>{if(busy)return;setBusy(true);$('#generationResult').innerHTML='<p>正在生成预览…</p><div class="ux-skeleton hero" style="margin-top:12px"></div><div class="ux-skeleton line"></div>';const fail=$('#failNext').checked;$('#failNext').checked=false;task.run(()=>{setBusy(false);$('#generationResult').innerHTML=fail?'<div class="ux-alert error" role="alert">生成失败，请点击“生成预览”重试。输入内容已保留。</div>':'<div class="ux-alert"><strong>预览已生成</strong><p>已整理商品概述、核心能力与适用场景，可继续查看并确认。</p></div>'})};$('#stop').onclick=()=>{task.cancel();setBusy(false);$('#generationResult').innerHTML='<div class="ux-alert">已停止生成，可重新开始。</div>'};
+
+</script>
+</body>
+</html>

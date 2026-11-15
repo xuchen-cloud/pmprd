@@ -1,0 +1,2 @@
+.ux-table-wrap{overflow-x:auto}.ux-table{border-collapse:collapse;width:100%;text-align:left}.ux-table th{background:var(--ux-page);font-weight:600}.ux-table th,.ux-table td{padding:12px 16px;border-bottom:1px solid var(--ux-divider)}.ux-table tr:hover td{background:#fafafa}.ux-pagination{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:16px}
+@media(max-width:767px){.ux-table th,.ux-table td{padding:10px}}

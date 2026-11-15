@@ -1,0 +1,94 @@
+{
+  "choice": {
+    "match": [
+      "ux-choice",
+      "ux-switch",
+      "ux-radio"
+    ]
+  },
+  "tabs": {
+    "match": [
+      "ux-tabs"
+    ]
+  },
+  "feedback": {
+    "match": [
+      "ux-tag",
+      "ux-alert",
+      "ux-empty",
+      "ux-skeleton",
+      "ux-toast",
+      "ux-popover",
+      "ux-notify"
+    ]
+  },
+  "table": {
+    "match": [
+      "ux-table",
+      "ux-pagination"
+    ]
+  },
+  "dialog": {
+    "match": [
+      "ux-dialog",
+      "ux-drawer"
+    ]
+  },
+  "upload": {
+    "match": [
+      "ux-dropzone",
+      "ux-file-list"
+    ]
+  },
+  "ai": {
+    "match": [
+      "ux-ai-",
+      "ux-sender",
+      "ux-preview-",
+      "ux-long-image"
+    ]
+  },
+  "navigation": {
+    "match": [
+      "ux-topbar",
+      "ux-nav",
+      "ux-shell",
+      "ux-sidenav",
+      "ux-breadcrumb"
+    ]
+  },
+  "selection": {
+    "match": [
+      "ux-selection",
+      "ux-transfer",
+      "ux-range",
+      "ux-tag-input",
+      "ux-tree-select"
+    ]
+  },
+  "display": {
+    "match": [
+      "ux-collapse",
+      "ux-tree",
+      "ux-progress",
+      "ux-statistic",
+      "ux-badge",
+      "ux-avatar",
+      "ux-timeline",
+      "ux-card",
+      "ux-calendar"
+    ]
+  },
+  "steps": {
+    "match": [
+      "ux-steps"
+    ]
+  },
+  "layout": {
+    "match": [
+      "ux-container",
+      "ux-layout",
+      "ux-col"
+    ]
+  }
+}

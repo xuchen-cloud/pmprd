@@ -1,0 +1,5 @@
+.ux-dialog{border:0;border-radius:8px;width:min(var(--ux-dialog-width),calc(100vw - 32px));max-height:calc(100dvh - 32px);padding:0;box-shadow:var(--ux-shadow-panel);color:var(--ux-text)}
+.ux-dialog::backdrop{background:var(--ux-mask)}.ux-dialog[open]{display:flex;flex-direction:column}.ux-dialog-head{padding:24px 32px 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex:none}.ux-dialog-head h2{font-size:20px}
+.ux-dialog-body{padding:8px 32px 24px;overflow:auto;min-height:0;flex:1}.ux-dialog-foot{display:flex;justify-content:flex-end;gap:8px;padding:16px 32px 24px;flex:none}
+.ux-drawer{margin:0 0 0 auto;width:min(var(--ux-drawer-width),100vw);max-width:100vw;height:100dvh;max-height:100dvh;border-radius:4px 0 0 4px;box-shadow:var(--ux-shadow-drawer)}.ux-drawer .ux-dialog-head{border-bottom:1px solid var(--ux-divider)}.ux-drawer .ux-dialog-foot{border-top:1px solid var(--ux-divider);padding:16px 24px}
+@media(max-width:767px){.ux-dialog-head{padding:20px 20px 12px}.ux-dialog-body{padding:8px 20px 20px}.ux-dialog-foot{padding:16px 20px}}

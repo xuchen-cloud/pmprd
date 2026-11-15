@@ -1,0 +1,3 @@
+# Preserve the upstream audit's standard CSV line endings without reporting
+# carriage returns as trailing whitespace.
+skills/opentiny-ux/references/upstream-file-audit.csv whitespace=cr-at-eol

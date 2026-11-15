@@ -1,0 +1,22 @@
+/* Convenience aliases to the complete OpenTiny token system. Exact sources and MIT notice: references/sources.md. */
+:root {
+  --ux-primary:var(--tv-color-bg-primary); --ux-primary-hover:var(--tv-color-act-primary-bg-hover);
+  --ux-link:var(--tv-color-text-link); --ux-selected:var(--tv-color-bg-active-control); --ux-selected-bg:var(--tv-base-color-brand-1);
+  --ux-text:var(--tv-color-text); --ux-secondary:var(--tv-color-text-secondary); --ux-muted:var(--tv-color-text-weaken);
+  --ux-page:var(--tv-color-bg); --ux-surface:var(--tv-color-bg-3); --ux-border:var(--tv-color-border); --ux-divider:var(--tv-color-border-divider);
+  --ux-disabled-bg:var(--tv-color-bg-disabled); --ux-disabled-text:var(--tv-color-text-disabled);
+  --ux-success:var(--tv-color-success-bg); --ux-warning:var(--tv-color-warn-bg); --ux-error:var(--tv-color-error-bg);
+  --ux-success-bg:var(--tv-color-success-bg-light); --ux-warning-bg:var(--tv-color-warn-bg-light); --ux-error-bg:var(--tv-color-error-bg-light);
+  --ux-mask:var(--tv-color-bg-mask);
+  --ux-font:var(--tv-font-family),sans-serif;
+  --ux-font-sm:var(--tv-font-size-sm); --ux-font-md:var(--tv-font-size-md); --ux-title-card:var(--tv-font-size-heading-xs); --ux-title-page:var(--tv-font-size-heading-sm); --ux-title-dialog:var(--tv-font-size-heading-md);
+  --ux-line:var(--tv-line-height-number); --ux-weight:var(--tv-font-weight-bold);
+  --ux-radius:var(--tv-border-radius-md); --ux-radius-panel:var(--tv-border-radius-lg); --ux-radius-small:var(--tv-border-radius-sm);
+  --ux-control:var(--tv-size-height-md); --ux-control-sm:var(--tv-size-height-sm); --ux-control-lg:var(--tv-size-height-lg);
+  --ux-gap-1:var(--tv-space-sm); --ux-gap-2:var(--tv-space-md); --ux-gap-3:var(--tv-space-lg); --ux-gap-4:var(--tv-space-xl); --ux-gap-5:var(--tv-space-xxl); --ux-gap-6:var(--tv-space-xxxl);
+  --ux-shadow-panel:var(--tv-shadow-4-down);
+  --ux-shadow-drawer:var(--tv-shadow-4-left);
+  --ux-gap-xs:var(--tv-space-xs); --ux-control-xs:var(--tv-size-height-xs); --ux-control-xl:var(--tv-size-height-xl);
+  /* Prototype layout values, not upstream mandates. */
+  --ux-page-width:1200px; --ux-dialog-width:560px; --ux-drawer-width:880px; --ux-sender-height:48px;
+}

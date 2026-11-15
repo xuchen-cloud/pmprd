@@ -1,0 +1,16 @@
+<!-- A shell example, not a mandatory layout. Rename IDs when combining copies. -->
+<header class="ux-topbar"><button type="button" class="ux-btn icon ux-mobile-nav" id="nav-toggle" aria-label="打开导航" aria-expanded="false" aria-controls="side-nav">☰</button><a class="ux-brand" href="#overview">管理中心</a><nav class="ux-nav" aria-label="全局导航"><a href="#overview" aria-current="page">工作空间</a></nav></header>
+<div class="ux-shell"><nav id="side-nav" class="ux-sidenav" aria-label="工作空间导航"><a href="#overview" aria-current="page">概览</a><a href="#members">成员</a><details><summary>设置</summary><a href="#settings">通知设置</a></details></nav><main class="ux-page" style="margin:0;width:100%"><nav class="ux-breadcrumb" aria-label="面包屑"><span>工作空间</span><span class="separator" aria-hidden="true">/</span><span id="nav-crumb" aria-current="page">概览</span></nav><section id="overview"><h1>概览</h1><p>工作空间概况</p></section><section id="members" hidden><h1>成员</h1><p>张敏 · 管理员</p></section><section id="settings" hidden><h1>通知设置</h1><label class="ux-switch"><input type="checkbox" checked>接收任务通知</label></section></main></div>
+<script>(()=>{
+const nav=document.querySelector('#side-nav'),toggle=document.querySelector('#nav-toggle');
+const close=()=>{nav.classList.remove('is-open');toggle.setAttribute('aria-expanded','false')};
+const select=hash=>{
+ const link=[...nav.querySelectorAll('a')].find(a=>a.hash===hash);if(!link)return;
+ nav.querySelectorAll('a').forEach(a=>{if(a===link)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
+ ['overview','members','settings'].forEach(id=>document.getElementById(id).hidden='#'+id!==hash);
+ document.querySelector('#nav-crumb').textContent=link.textContent;close();
+};
+toggle.onclick=()=>{const open=nav.classList.toggle('is-open');toggle.setAttribute('aria-expanded',String(open))};
+for(const root of [nav,document.querySelector('.ux-topbar')])root.addEventListener('click',e=>{const a=e.target.closest('a');if(!a)return;e.preventDefault();select(a.hash)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&nav.classList.contains('is-open')){close();toggle.focus()}});
+})();</script>
