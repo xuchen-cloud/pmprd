@@ -49,6 +49,6 @@ npm pack
 
 Host 使用 DSH 官方的 `connection.fetch.register`、`connection.rpc.call`、`fs`、`sessionController`、`sandboxPolicy` 与 `Agent.followup` 接口。文件锁与内部任务状态负责恢复和交付，不要求模型逐项读取；完成回执由 Host 自动接收。React 复用 DSH 共享模块，不包含另一套 Cordis。旧 `apply` 和 `ux_review_complete` 保留兼容，新的修改提示词不再依赖它们。
 
-测试使用临时文件和假的 Agent 入箱，不产生模型调用。`scripts/verify-installed-sdk.cjs` 可在隔离服务中核对已安装 SDK 的插件注入、路由与 skill 挂载。原生 DSH 验证、各版记录与限制见 [开发说明](https://github.com/xinyuefangfang/pmprd/blob/main/docs/development.md)；Windows 路径覆盖不等于 Windows 原生界面实测。
+测试使用临时文件和假的 Agent 入箱，不产生模型调用。`scripts/verify-installed-sdk.cjs` 可在隔离服务中核对已安装 SDK 的插件注入、路由与 skill 挂载。原生 DSH 验证、各版记录与限制见 [开发说明](https://github.com/xuchen-cloud/pmprd/blob/main/docs/development.md)；Windows 路径覆盖不等于 Windows 原生界面实测。
 
 本插件图标为项目原创 SVG，MIT 许可；未复制 DSH 图标与品牌。

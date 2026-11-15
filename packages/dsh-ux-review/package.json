@@ -48,7 +48,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/xinyuefangfang/pmprd.git",
+    "url": "https://github.com/xuchen-cloud/pmprd.git",
     "directory": "packages/dsh-ux-review"
   }
 }
