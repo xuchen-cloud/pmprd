@@ -6,6 +6,22 @@
 
 插件适配 **DeepSeek Harness 0.2.2-rc.3**。目前未发布 npm 包；不要只输入 `dsh-ux-review` 并假定能从 npm 安装。仓库根目录不是可安装的插件包，也不要把 GitHub 自动生成的 Source code ZIP 当成安装包。
 
+## 从 GitHub 一条指令安装
+
+仓库和 [v0.1.12 Release](https://github.com/xuchen-cloud/pmprd/releases/tag/v0.1.12) 公开可读，无需 GitHub 账号或登录。下载预编译安装包即可，不需要克隆源码或本地编译。
+
+发给对方 DSH 的自然语言指令：
+
+> 请从 https://github.com/xuchen-cloud/pmprd/releases/tag/v0.1.12 下载 dsh-ux-review-0.1.12.tgz，检查本机 DSH 是否兼容 0.2.2-rc.3，然后安装到当前正在使用的 profile 并启用插件；确认内置的 ux-prototype 和 opentiny-ux 两份 skill 已加载，并告诉我是否需要重启。
+
+已配置桌面版 `dsh` 命令时，终端可直接执行（macOS / Windows PowerShell）：
+
+```sh
+dsh plugin --profile desktop add https://github.com/xuchen-cloud/pmprd/releases/download/v0.1.12/dsh-ux-review-0.1.12.tgz
+```
+
+这条命令用于 `desktop` profile；使用其他 profile 时换成实际名称。也可把同一个下载链接粘贴到 DSH「插件 → 添加插件」，安装后启用。插件加载若要求重启，先保存当前工作后再重启。
+
 ## 在新电脑安装
 
 1. 安装并打开 DSH 0.2.2-rc.3。
@@ -50,6 +66,6 @@ npm run release:pack
 
 产物位于 `release/`，生成脚本会检查 Host、Client、两份 skill、CLI 和 vendor 是否齐全，并输出 SHA-256。在临时工作区完成构建，不更新本机已链接的 `packages/dsh-ux-review/lib/`。
 
-源码提交到远端后，可创建对应版本的 GitHub Release，把 `.tgz`、`.sha256` 与 `INSTALL.md` 附到 Release。使用者可下载文件安装，也可把该 Release 的 `.tgz` 下载链接直接填入 DSH。**只有附件实际上传成功后，该下载链接才可用**。Git 提交不会自动发布安装包；目前没有自动发布工作流。
+每次版本更新后创建对应的 GitHub Release，把 `.tgz`、`.sha256` 与 `INSTALL.md` 附到 Release，再更新安装指令中的版本链接。Git 提交不会自动发布安装包；目前没有自动发布工作流。
 
 Windows 原生安装与 UI 尚未实机验证，不能把跨平台路径测试当作 Windows 实测。

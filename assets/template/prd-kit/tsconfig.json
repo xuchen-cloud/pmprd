@@ -1,5 +1,0 @@
-{
-  "extends": "../tsconfig.json",
-  "include": ["."],
-  "exclude": ["server", "validator/cli.ts", "vite.config.ts", "prd-kit.test.ts"]
-}

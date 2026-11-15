@@ -6,12 +6,16 @@
 
 ## 新电脑安装
 
-1. 安装 DSH 0.2.2-rc.3，取得已构建的 `dsh-ux-review-0.1.12.tgz`。
+1. 安装 DSH 0.2.2-rc.3，从 [GitHub Release](https://github.com/xuchen-cloud/pmprd/releases/tag/v0.1.12) 下载 `dsh-ux-review-0.1.12.tgz`（公开下载，无需登录）。
 2. 在 DSH「插件 → 添加插件」填写安装包的本地绝对路径或下载链接。
 3. 安装后点击「立即启用」，按 DSH 提示重启。
 4. 在会话右侧「新建标签页 → 打开设计文档」选择 HTML。
 
 安装包内置 `ux-prototype` 和 `opentiny-ux`，启用插件即加载这两份 skill，无需另外复制。安装、升级与独立 skill 用法见 [分发说明](docs/distribution.md)。源码仓库 ZIP 不是插件安装包；本项目尚未发布 npm 包。
+
+也可以直接把这句话发给对方 DSH：
+
+> 请从 https://github.com/xuchen-cloud/pmprd/releases/tag/v0.1.12 下载 dsh-ux-review-0.1.12.tgz，检查本机 DSH 是否兼容 0.2.2-rc.3，然后安装到当前正在使用的 profile 并启用插件；确认内置的 ux-prototype 和 opentiny-ux 两份 skill 已加载，并告诉我是否需要重启。
 
 ## 开发和打包
 
@@ -31,7 +35,6 @@ npm run release:pack
 | `skills/ux-prototype/` | 单文件协议、CLI、按需读取与 `finish` |
 | `skills/opentiny-ux/` | OpenTiny 设计原则、组件和参考资源 |
 | `docs/` | 开发、分发和版本变更说明 |
-| `assets/template/`、根目录 `SKILL.md` | 保留兼容的早期前端抽离模板 |
 
 用户稿件、任务状态、备份、试验原型和构建副本不纳入 Git。公开示例只保留合成的 [保存/弹窗示例](ux-workbench/examples/interaction-demo.ux.html)。
 
