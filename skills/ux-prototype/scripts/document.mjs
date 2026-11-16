@@ -28,7 +28,7 @@ const author = (value, fallback = 'human', name = fallback === 'agent' ? 'AI' : 
 
 // Skip raw-text elements and HTML comments, so JSON/string content in business scripts
 // cannot masquerade as another metadata block or closing body tag.
-function inspectHtml(html) {
+export function inspectHtml(html) {
   if (typeof html !== 'string') fail('HTML 必须是字符串。');
   const tokens = [], pattern = /<!--[\s\S]*?-->|<(script|style|textarea|title)\b(?:"[^"]*"|'[^']*'|[^'">])*>|<\/body\s*>/gi;
   let match;
@@ -66,6 +66,9 @@ export function normalize(value) {
   if (!object(doc.annotations)) return doc;
   for (const [key, a] of Object.entries(doc.annotations)) {
     if (!object(a)) continue;
+    // Older preview picks used null for targets without a static anchor.
+    // Keep their selector/context and use the protocol's absent-ID form.
+    if (a.anchor?.id === null) delete a.anchor.id;
     if (!a.kind) {
       // Earlier exploratory files did not distinguish durable explanations from requests.
       // Preserve their exact annotation and require a deliberate type decision before AI use.
@@ -300,6 +303,8 @@ export function patchBetween(before, after) {
 
 function stampAnnotation(previous, next, editor, at) {
   const a = clone(next);
+  // Unsaved recovery drafts can still contain the old preview's null ID.
+  if (a.anchor?.id === null) delete a.anchor.id;
   if (previous) { a.createdBy = clone(previous.createdBy); a.createdAt = previous.createdAt; }
   else { a.createdBy = clone(editor); a.createdAt = at; }
   a.updatedBy = clone(editor); a.updatedAt = at;

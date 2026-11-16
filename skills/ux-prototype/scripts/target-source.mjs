@@ -1,4 +1,5 @@
 import { parseHtml, htmlparser2Adapter, selectAll } from './vendor/static-html.mjs';
+import { runtimeTargetSource } from './runtime-source.mjs';
 
 const limit = 2400;
 const nonTargets = new Set(['template', 'script', 'style', 'head', 'title', 'meta', 'link', 'base', 'noscript']);
@@ -23,6 +24,8 @@ export function targetSources(source, anchors) {
     if (offset !== undefined) offsets.set(offset, (offsets.get(offset) || 0) + 1);
   }
   return anchors.map(anchor => {
+    const runtime = anchor && runtimeTargetSource(source, anchor, limit);
+    if (runtime) return runtime;
     let matches = [], matchedBy = 'selector';
     if (anchor?.id) {
       matches = elements.filter(node => node.attribs['data-ux-anchor'] === anchor.id);

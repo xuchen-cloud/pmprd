@@ -2,14 +2,15 @@ import test, { before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 import { previewHtml, stampAnchor } from '../src/preview.mjs';
+import { create, createAnnotation, recordHuman, write, parse } from '../../skills/ux-prototype/scripts/document.mjs';
 let browser;
 before(async () => { browser = await chromium.launch({ channel: 'chrome', headless: true }); });
 after(async () => { await browser?.close(); });
 const source = `<!doctype html><html><head><title>原型测试</title></head><body style="margin:30px;height:1600px"><button id="action">提交申请</button><input id="name" placeholder="姓名"><button id="open">打开弹窗</button><dialog id="dialog"><button id="confirm">确认申请</button></dialog><div id="region" style="width:400px;height:200px;margin-top:40px">列表区域</div><script>window.count=0;document.querySelector('#action').onclick=()=>window.count++;document.querySelector('#open').onclick=()=>document.querySelector('#dialog').showModal();localStorage.setItem('draft','原型草稿');</script></body></html>`;
-async function setup() {
+async function setup(html = source) {
   const page = await browser.newPage({ viewport: { width: 1200, height: 900 } });
   await page.setContent('<iframe id="preview" sandbox="allow-scripts allow-forms" style="width:900px;height:650px"></iframe>');
-  await page.evaluate(html => { window.messages = []; addEventListener('message', e => { if (e.source === document.querySelector('iframe').contentWindow) window.messages.push(e.data); }); document.querySelector('iframe').srcdoc = html; }, previewHtml(source, 'test-token'));
+  await page.evaluate(html => { window.messages = []; addEventListener('message', e => { if (e.source === document.querySelector('iframe').contentWindow) window.messages.push(e.data); }); document.querySelector('iframe').srcdoc = html; }, previewHtml(html, 'test-token'));
   await page.waitForFunction(() => window.messages.some(m => m.type === 'ready'));
   return { page, frame: page.frames()[1], send: data => page.evaluate(data => document.querySelector('iframe').contentWindow.postMessage({ channel: 'craft-ux-host', token: 'test-token', ...data }, '*'), data) };
 }
@@ -61,6 +62,9 @@ test('region picking reports normalized coordinates without activating a busines
   await page.mouse.move(box.x + 20, box.y + 20); await page.mouse.down(); await page.mouse.move(box.x + 180, box.y + 100); await page.mouse.up();
   const { anchor } = await message(page, 'picked');
   assert.equal(anchor.kind, 'region'); assert.ok(anchor.region.width > 0 && anchor.region.width < 1); assert.ok(anchor.region.height > 0 && anchor.region.height < 1);
+  assert.equal(await page.evaluate(() => window.messages.filter(m => m.type === 'interaction').length), 0);
+  await frame.locator('#action').click();
+  assert.equal(await frame.evaluate(() => window.count), 1, 'The next ordinary click must still work');
   await page.close();
 });
 test('wrong channel tokens cannot trigger picking or trusted stamping', async () => {
@@ -103,4 +107,21 @@ test('static anchor stamping preserves unique IDs', async () => {
   assert.equal(result.first.anchor.id, result.second.anchor.id);
   assert.equal((result.second.source.match(/data-ux-anchor=/g) || []).length, 1);
   await page.close();
+});
+
+test('picking a runtime-created element can be saved for AI submission without a static anchor', async t => {
+  const dynamicSource = '<!doctype html><html><body><script>const button = document.createElement("button"); button.id = "dynamic-target"; button.textContent = "动态操作"; document.body.append(button);</script></body></html>';
+  const { page, frame, send } = await setup(dynamicSource);
+  t.after(() => page.close());
+  await send({ type: 'mode', mode: 'element' });
+  await frame.locator('#dynamic-target').click();
+  const { anchor } = await message(page, 'picked');
+  const stamped = await page.evaluate(({ source, anchor, fn }) => new Function('return (' + fn + ')')()(source, anchor), { source: dynamicSource, anchor, fn: stampAnchor.toString() });
+  const initial = create(), annotation = createAnnotation({ kind: 'change-request', body: '修改动态操作的文案', anchor: stamped.anchor });
+  let saved;
+  assert.doesNotThrow(() => { saved = recordHuman(initial, { ...initial, annotations: { [annotation.id]: annotation } }); }, 'Runtime-only targets must not cause 稳定锚点 ID 无效 when saving before submission');
+  assert.equal(stamped.source, dynamicSource, 'A runtime target must not be invented in static source');
+  assert.equal(Object.hasOwn(parse(write(stamped.source, saved)).annotations[annotation.id].anchor, 'id'), false);
+  await send({ type: 'annotations', annotations: [annotation] });
+  await page.waitForFunction(() => window.messages.some(m => m.type === 'snapshot' && m.anchors[0]?.found));
 });

@@ -147,6 +147,38 @@ test('legacy annotations stay readable and protected until type confirmation', (
 });
 function metadataBlockUnchecked(doc) { return '<!-- ux-document:start --><script type="application/json" id="ux-document">' + serializeJSON(doc) + '</script><!-- ux-document:end -->'; }
 
+test('legacy null anchor IDs are omitted on read without changing annotation content or history', () => {
+  const legacy = fixture();
+  legacy.annotations['ann-ai'].anchor.id = null;
+  const original = clone(legacy), expected = clone(legacy);
+  delete expected.annotations['ann-ai'].anchor.id;
+  const parsed = parse('<html><body>' + metadataBlockUnchecked(legacy) + '</body></html>');
+  assert.deepEqual(parsed, expected);
+  assert.deepEqual(legacy, original);
+  assert.deepEqual(parse(write(source, parsed)), expected);
+});
+
+test('saving an old draft with a null anchor ID preserves its selector, region and navigation context', () => {
+  const before = create(), draft = clone(before);
+  const location = { kind: 'region', id: null, selector: '#runtime-panel', text: '动态内容', region: { x: .1, y: .1, width: .5, height: .5 }, view: { key: 'details', itemId: '42' } };
+  draft.annotations['ann-draft'] = createAnnotation({ id: 'ann-draft', kind: 'change-request', body: '保留上次填写的修改意见', anchor: location });
+  const saved = recordHuman(before, draft), expected = { ...location };
+  delete expected.id;
+  assert.deepEqual(saved.annotations['ann-draft'].anchor, expected);
+  assert.equal(saved.annotations['ann-draft'].body, '保留上次填写的修改意见');
+  assert.deepEqual(saved.changes.at(-1).patch[0].value.anchor, expected);
+  assert.equal(draft.annotations['ann-draft'].anchor.id, null, 'Do not mutate the recovery snapshot');
+});
+
+test('non-null invalid stable IDs remain errors when parsing or saving drafts', () => {
+  for (const id of ['', '   ', 123, false, {}, []]) {
+    const before = create(), draft = clone(before);
+    draft.annotations['ann-invalid'] = createAnnotation({ id: 'ann-invalid', body: '无效锚点', anchor: { ...anchor, id } });
+    assert.throws(() => recordHuman(before, draft), /稳定锚点 ID 无效/);
+    assert.throws(() => parse('<html><body>' + metadataBlockUnchecked(draft) + '</body></html>'), /稳定锚点 ID 无效/);
+  }
+});
+
 test('validation rejects unexplained history discontinuity and invalid region coordinates', () => {
   const doc = fixture(); doc.changes.at(-1).revision = 80;
   assert.throws(() => validate(doc), /连续/);

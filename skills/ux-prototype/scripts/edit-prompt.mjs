@@ -9,7 +9,8 @@ export function editPrompt(task, context, { scriptsPath, platform = process.plat
   const requests = context.selectedRequests.map((request, index) => {
     const anchor = request.anchor || {}, target = request.targetSource;
     const location = { selector: anchor.selector, ...(anchor.id ? { anchorId: anchor.id } : {}), ...(anchor.text ? { originalText: anchor.text } : {}), ...(anchor.view ? { view: anchor.view } : {}) };
-    return `${index + 1}. 意见 ${request.id}：${request.body}\n目标：${JSON.stringify(location)}\n${target?.status === 'found' ? `目标源码${target.truncated ? '（片段已截断，需要时补读）' : ''}：\n\`\`\`html\n${target.html}\n\`\`\`` : '目标暂不能静态定位，按目标信息补查工作文件。'}`;
+    const snippet = target?.matchedBy === 'runtime' ? [target, ...(target.callers || [])].map((part, i) => `${i ? '调用位置' : '动态生成代码'}：工作文件第 ${part.line} 行，第 ${part.column} 列${part.truncated ? '（附近片段）' : ''}\n\`\`\`javascript\n${part.html}\n\`\`\``).join('\n') : target?.status === 'found' ? `目标源码${target.truncated ? '（片段已截断，需要时补读）' : ''}：\n\`\`\`html\n${target.html}\n\`\`\`` : '目标暂不能静态定位，按目标信息补查工作文件。';
+    return `${index + 1}. 意见 ${request.id}：${request.body}\n目标：${JSON.stringify(location)}\n${snippet}`;
   });
   const pending = context.scope.pendingPrdChangeCount;
   return [

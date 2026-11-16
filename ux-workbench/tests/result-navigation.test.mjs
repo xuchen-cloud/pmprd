@@ -20,9 +20,9 @@ test('opening AI results reports errors, prevents concurrent opens, and recovers
   const snapshot = { path: '/workspace/source.ux.html', name: 'source.ux.html', version: '1', html: write('<html><body><button>源文件</button></body></html>', create({ title: '结果打开回归', prd: '# 需求\n\n原始需求。' })) };
   const outputPath = '/workspace/source.review-result.ux.html';
   const updatedSource = '<html><body><button>已更新当前文件</button></body></html>';
-  const updatedDoc = recordAgent(parse(snapshot.html), { summary: '更新当前文件', details: ['更新按钮与需求'], prd: '# 需求\n\nAI 更新后的需求。', uxBefore: sourceOnly(snapshot.html), uxAfter: updatedSource });
+  const updatedDoc = recordAgent(parse(snapshot.html), { taskId: 'result-task-3', summary: '更新当前文件', details: ['更新按钮与需求'], prd: '# 需求\n\nAI 更新后的需求。', uxBefore: sourceOnly(snapshot.html), uxAfter: updatedSource });
   const updatedSnapshot = { ...snapshot, version: 'updated', html: write(updatedSource, updatedDoc) };
-  const nextSnapshot = { ...snapshot, version: 'updated-again', html: write(updatedSource, recordAgent(updatedDoc, { summary: '再次更新需求', details: ['更新第二轮需求'], prd: '# 需求\n\nAI 第二轮更新。' })) };
+  const nextSnapshot = { ...snapshot, version: 'updated-again', html: write(updatedSource, recordAgent(updatedDoc, { taskId: 'result-task-4', summary: '再次更新需求', details: ['更新第二轮需求'], prd: '# 需求\n\nAI 第二轮更新。' })) };
   const page = await browser.newPage({ viewport: { width: 1500, height: 950 } });
   const pageErrors = []; page.on('pageerror', error => pageErrors.push(error.message));
   await page.addInitScript(({ snapshot, outputPath, updatedSnapshot }) => {
@@ -31,12 +31,12 @@ test('opening AI results reports errors, prevents concurrent opens, and recovers
     const completed = () => {
       const replace = window.__taskMode.startsWith('replace');
       if (replace) current = window.__nextSnapshot;
-      return { id: 'result-task', status: 'completed', outputPath: replace ? current.path : outputPath, delivery: replace ? 'updated-current' : 'new-version', message: '修改完成' };
+      return { id: window.__taskId, status: 'completed', outputPath: replace ? current.path : outputPath, delivery: replace ? 'updated-current' : 'new-version', message: '修改完成' };
     };
     window.__UX_REVIEW_HOST__ = {
       read: async () => current,
       save: async args => (current = { ...current, html: args.html, version: '2' }),
-      submit: async args => { window.__submissions.push(args); return window.__taskMode === 'completed' ? completed() : { id: 'result-task', status: 'queued' }; },
+      submit: async args => { window.__submissions.push(args); window.__taskId = 'result-task-' + window.__submissions.length; return window.__taskMode === 'completed' ? completed() : { id: window.__taskId, status: 'queued' }; },
       task: async () => window.__taskMode === 'replace-wait' ? new Promise(resolve => { window.__finishTask = () => resolve(completed()); }) : completed(),
       openResult(path) {
         window.__openCalls.push(path);
@@ -106,6 +106,8 @@ test('opening AI results reports errors, prevents concurrent opens, and recovers
   await page.frameLocator('iframe').getByRole('button', { name: '已更新当前文件', exact: true }).waitFor();
   await page.getByText('AI 更新后的需求。', { exact: true }).waitFor();
   assert.deepEqual(await page.evaluate(() => window.__openCalls), []);
+  assert.equal(await open.count(), 0, 'An already loaded in-place result must not offer another navigation');
+  await page.getByText('已更新当前文件：修改完成', { exact: true }).waitFor();
 
   // AI owns the document while this round is active; completion restores editing.
   await page.getByLabel('收起任务提示', { exact: true }).click();

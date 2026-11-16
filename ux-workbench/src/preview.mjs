@@ -1,6 +1,9 @@
+import { previewScriptMap, sourcePosition, normalizeScript } from '../../skills/ux-prototype/scripts/runtime-source.mjs';
+import { trackRuntimeSources } from './runtime-source.mjs';
+
 // Runs in an opaque-origin iframe; this bridge has no filesystem or host API access.
-function bridge(token) {
-  let mode = 'interact', annotations = [], dragging = null, showAnnotations = true, frame = 0;
+function bridge(token, origins) {
+  let mode = 'interact', annotations = [], dragging = null, showAnnotations = true, frame = 0, ignoreSelectionClick = false;
   let referencedIds = new Set();
   const send = data => parent.postMessage({ channel: 'craft-ux-preview', token, ...data }, '*');
   const css = value => CSS.escape(String(value));
@@ -64,7 +67,9 @@ function bridge(token) {
     return parts.length ? parts.join(' > ') : 'html';
   }
   function describe(element) {
-    const anchor = { kind: 'element', id: element.dataset.uxAnchor || null, selector: selector(element), tag: element.tagName.toLowerCase(), text: text(element), viewport: { width: innerWidth, height: innerHeight } };
+    const anchor = { kind: 'element', selector: selector(element), tag: element.tagName.toLowerCase(), text: text(element), viewport: { width: innerWidth, height: innerHeight } };
+    if (element.dataset.uxAnchor) anchor.id = element.dataset.uxAnchor;
+    if (origins?.has(element)) anchor.source = origins.get(element);
     const tabs = tabContexts(element, true);
     if (tabs.length) anchor.tabs = tabs;
     try {
@@ -255,6 +260,7 @@ function bridge(token) {
     } else { const el = meaningful(event.target); if (el) send({ type: 'hover', rect: rect(el) }); }
   }, true);
   document.addEventListener('pointerdown', event => {
+    ignoreSelectionClick = false;
     if (mode !== 'region' || event.button !== 0) return;
     event.preventDefault(); event.stopImmediatePropagation();
     let element = meaningful(event.target);
@@ -267,11 +273,17 @@ function bridge(token) {
     const { element, x, y } = dragging, r = element.getBoundingClientRect(); dragging = null;
     const endX = Math.max(r.left, Math.min(event.clientX, r.right)), endY = Math.max(r.top, Math.min(event.clientY, r.bottom));
     const region = { x: (Math.min(x, endX) - r.left) / r.width, y: (Math.min(y, endY) - r.top) / r.height, width: Math.abs(endX - x) / r.width, height: Math.abs(endY - y) / r.height };
-    if (region.width * r.width >= 4 && region.height * r.height >= 4) send({ type: 'picked', anchor: { ...describe(element), kind: 'region', region } });
+    if (region.width * r.width >= 4 && region.height * r.height >= 4) {
+      ignoreSelectionClick = true;
+      send({ type: 'picked', anchor: { ...describe(element), kind: 'region', region } });
+    }
     mode = 'interact';
   }, true);
   document.addEventListener('pointercancel', () => { dragging = null; send({ type: 'cancel-pick' }); });
   document.addEventListener('click', event => {
+    // The click completing a region drag must not dismiss its new composer
+    // or activate the business control. A new pointerdown resets this guard.
+    if (ignoreSelectionClick) { ignoreSelectionClick = false; event.preventDefault(); event.stopImmediatePropagation(); return; }
     if (event.isTrusted) navigationRequest?.abort('superseded');
     if (mode !== 'interact') {
       event.preventDefault(); event.stopImmediatePropagation();
@@ -335,12 +347,12 @@ function bridge(token) {
 
 export function previewHtml(source, token) {
   const policy = `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'">`;
-  const code = `(${bridge.toString()})(${JSON.stringify(token)});`.replace(/<\/script/gi, '<\\/script');
-  const injected = policy + '<script>' + code + '</script>';
-  let clean = source.replace(/<meta\b(?=[^>]*http-equiv\s*=\s*["']?Content-Security-Policy)[^>]*>/gi, '').replace(/<base\b[^>]*>/gi, '');
-  if (/<head\b[^>]*>/i.test(clean)) return clean.replace(/<head\b[^>]*>/i, match => match + injected);
-  if (/<html\b[^>]*>/i.test(clean)) return clean.replace(/<html\b[^>]*>/i, match => match + '<head>' + injected + '</head>');
-  return '<!doctype html><html><head>' + injected + '</head><body>' + clean + '</body></html>';
+  let clean = normalizeScript(source).replace(/<meta\b(?=[^>]*http-equiv\s*=\s*["']?Content-Security-Policy)[^>]*>/gi, '').replace(/<base\b[^>]*>/gi, '');
+  if (!/<head\b[^>]*>/i.test(clean)) clean = /<html\b[^>]*>/i.test(clean) ? clean.replace(/<html\b[^>]*>/i, match => match + '<head></head>') : '<!doctype html><html><head></head><body>' + clean + '</body></html>';
+  const head = clean.match(/<head\b[^>]*>/i), offset = head.index + head[0].length;
+  const insertion = { ...sourcePosition(clean, offset), prefixLength: policy.length + '<script>'.length, suffixLength: '</script>'.length };
+  const code = `(${bridge.toString()})(${JSON.stringify(token)},(${trackRuntimeSources.toString()})(${JSON.stringify(previewScriptMap(source, clean))},${JSON.stringify(insertion)}));`.replace(/<\/script/gi, '<\\/script');
+  return clean.slice(0, offset) + policy + '<script>' + code + '</script>' + clean.slice(offset);
 }
 
 export function stampAnchor(source, anchor) {

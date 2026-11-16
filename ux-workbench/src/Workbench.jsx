@@ -23,6 +23,7 @@ import { copyTextWhenReady } from './copy-text.mjs';
 const LABELS = { explanation: '交互说明', 'change-request': '修改意见' };
 const KIND = annotation => annotation.kind === 'change-request' ? 'change-request' : 'explanation';
 const activeTask = task => ['queued', 'running'].includes(task?.status);
+const resultLoaded = (task, file, doc) => !!task?.outputPath && task.outputPath === file?.path && !!doc?.changes.some(change => change.taskId === task.id);
 const referencedExplanationIds = doc => getReferencedIds(doc?.prd || '').filter(id => doc?.annotations[id]?.kind === 'explanation');
 const storage = {
   get(key, fallback) { try { return JSON.parse(localStorage.getItem('ux-review:' + key)) ?? fallback; } catch { return fallback; } },
@@ -427,7 +428,7 @@ export default function Workbench({ host, readOnly: permanentlyReadOnly = false,
       if (!saved) return null;
       const snapshot = { ...file, ...saved, html: saved.html || html };
       const resultDoc = parse(snapshot.html);
-      setFile(snapshot); setBaseDoc(clone(resultDoc)); setDoc(clone(resultDoc)); setSource(currentSource); setEdits({}); setEditingId(null); storage.remove('draft:' + resultDoc.id);
+      setFile(snapshot); setBaseDoc(clone(resultDoc)); setDoc(clone(resultDoc)); setSource(sourceOnly(snapshot.html)); setEdits({}); setEditingId(null); storage.remove('draft:' + resultDoc.id);
       notify('已保存，PRD 与标注变更已写入文件。'); return snapshot;
     } catch (e) { notify(e.message || String(e), 'error'); return null; }
     finally { setBusy(''); }
@@ -470,6 +471,7 @@ export default function Workbench({ host, readOnly: permanentlyReadOnly = false,
   const openTaskResult = useCallback(async (path, preserveDraft = false) => {
     if (openingResultRef.current) return;
     const current = stateRef.current, sameFile = path === current.file?.path;
+    if (sameFile && resultLoaded(current.task, current.file, current.baseDoc)) return;
     if (current.dirty) {
       if (!sameFile || !preserveDraft) { notify('你有未保存修改，已保留在当前页面。', 'info'); return; }
       storage.set('draft:' + current.doc.id, { path: current.file.path, baseVersion: current.file.version, baseDoc: current.baseDoc, baseSource: sourceOnly(current.file.html), doc: current.doc, source: current.source, edits: current.edits, at: now() });
@@ -694,8 +696,8 @@ export default function Workbench({ host, readOnly: permanentlyReadOnly = false,
       {!readOnly && host.submit && <button className="uxw-ai-button" onClick={() => { setCreateNewVersion(false); setAiOpen(true); if (!selectedIds.length) setSelectedIds(annotations.filter(a => KIND(a) === 'change-request' && a.status !== 'resolved').map(a => a.id)); }} disabled={!!busy || ['running', 'queued'].includes(task?.status)}><Sparkles size={16} />交给 AI 修改</button>}
     </header>
     {task && <div className={`uxw-taskbar is-${task.status}${task.destination === 'external' ? ' is-external' : ''}`}>
-      <Sparkles size={14} aria-hidden="true" /><span className="uxw-task-message">{task.message || ({ queued: '任务已排队', running: 'AI 正在修改原型', completed: '修改完成', succeeded: '修改完成', failed: '任务未完成', cancelled: '任务已取消' }[task.status] || task.status)}</span>
-      {task.outputPath && <button type="button" className="uxw-text-button" disabled={openingResult} aria-busy={openingResult} onClick={() => openTaskResult(task.outputPath, true)}>{openingResult ? <>正在打开修改结果 <LoaderCircle className="uxw-spin" size={12} /></> : <>打开修改结果 <ArrowRight size={12} /></>}</button>}
+      <Sparkles size={14} aria-hidden="true" /><span className="uxw-task-message">{resultLoaded(task, file, baseDoc) && task.delivery === 'updated-current' ? '已更新当前文件' + (task.message ? '：' + task.message : '') : task.message || ({ queued: '任务已排队', running: 'AI 正在修改原型', completed: '修改完成', succeeded: '修改完成', failed: '任务未完成', cancelled: '任务已取消' }[task.status] || task.status)}</span>
+      {task.outputPath && !resultLoaded(task, file, baseDoc) && <button type="button" className="uxw-text-button" disabled={openingResult} aria-busy={openingResult} onClick={() => openTaskResult(task.outputPath, true)}>{openingResult ? <>正在打开修改结果 <LoaderCircle className="uxw-spin" size={12} /></> : <>打开修改结果 <ArrowRight size={12} /></>}</button>}
       <span className="uxw-spacer" />
       {task.destination === 'external' && task.ownedBySession !== false && activeTask(task) && <div className="uxw-task-actions">
         {task.prompt && <IconButton icon={Copy} label="复制修改说明" onClick={copyTaskPrompt} />}
