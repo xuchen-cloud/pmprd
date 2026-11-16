@@ -7,12 +7,15 @@ import { pathToFileURL } from 'node:url';
 import { chromium } from 'playwright';
 import { exportReviewHtml } from '../src/export.mjs';
 import { create, createAnnotation, recordHuman, clone, write, parse, sourceOnly } from '../../skills/ux-prototype/scripts/document.mjs';
+import { storePrdImage } from '../../skills/ux-prototype/scripts/prd-assets.mjs';
 
 test('full review export works offline, preserves metadata, and hides editing controls', async () => {
   const source = '<!doctype html><html><head><title>Offline prototype</title></head><body><form id="local-form"><input id="draft" placeholder="草稿"><button id="save" data-ux-anchor="save" type="submit">保存草稿</button></form><output id="result"></output><script>document.querySelector("#local-form").onsubmit=e=>{e.preventDefault();document.querySelector("#result").textContent="已保存";};</script></body></html>';
   const initial = create({ title: '离线交接测试', prd: '# 保存流程\n\n原始需求\n\n<script>window.diffExecuted=true</script>' });
   const changed = clone(initial);
-  changed.prd += '\n\n人工修改需求\n\n| 字段 | 规则 |\n| --- | --- |\n| 名称 | 必填 |\n\n<table><tbody><tr><th colspan="2"><p>合并表头</p></th></tr><tr><td><p>目标</p></td><td><p>离线可读</p></td></tr></tbody></table>\n\n![需求示意](data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/l9sAAAAASUVORK5CYII=)';
+  const image=storePrdImage({},'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/l9sAAAAASUVORK5CYII=','需求示意');
+  changed.assets=image.assets;
+  changed.prd += '\n\n人工修改需求\n\n| 字段 | 规则 |\n| --- | --- |\n| 名称 | 必填 |\n\n<table><tbody><tr><th colspan="2"><p>合并表头</p></th></tr><tr><td><p>目标</p></td><td><p>离线可读</p></td></tr></tbody></table>' + `\n\n<img src="${image.source}" alt="需求示意" width="120" height="120">`;
   for (const [kind, body] of [['explanation', '保存当前草稿，保持输入内容。'], ['change-request', '按钮文案改为保存并继续。']]) {
     const annotation = createAnnotation({ kind, body, anchor: { kind: 'element', id: 'save', selector: '#save' } });
     changed.annotations[annotation.id] = annotation;
@@ -39,6 +42,8 @@ test('full review export works offline, preserves metadata, and hides editing co
     assert.equal(await page.locator('.uxw-prd-content table').count(), 2);
     assert.equal(await page.locator('.uxw-prd-content th[colspan="2"]').innerText(), '合并表头');
     await page.waitForFunction(() => document.querySelector('.uxw-prd-content img')?.naturalWidth === 1);
+    assert.equal(await page.locator('.uxw-prd-content img').getAttribute('width'),'120');
+    assert.equal((await page.locator('.uxw-prd-content img').boundingBox()).width,120);
     assert.equal(await page.locator('.uxw-prd-content').evaluate(el => getComputedStyle(el).fontSize), '14px');
     assert.equal(await page.locator('.uxw-prd-content h1').evaluate(el => getComputedStyle(el).fontSize), '20px');
     await page.getByRole('button', { name: '显示标注', exact: true }).click();

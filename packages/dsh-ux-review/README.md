@@ -4,11 +4,13 @@ DeepSeek Harness **0.2.2-rc.3** 插件。交互原型、PRD、标注和变更历
 
 ## 安装与打开
 
-从 [公开 Release](https://github.com/xuchen-cloud/pmprd/releases/tag/v0.1.12) 下载 `dsh-ux-review-0.1.12.tgz`，无需 GitHub 登录。先安装 DSH 0.2.2-rc.3。打开「插件 → 添加插件」，填写已构建的 `dsh-ux-review-0.1.12.tgz` 的本地绝对路径或下载链接；安装完成后点击「立即启用」，按 DSH 提示重启。开发者也可添加已构建的本目录。启用后，`ux-prototype` 和 `opentiny-ux` 加入 DSH 的 skill 目录，项目或用户自定义的同名 skill 按 DSH 的优先级覆盖。包内包含构建好的 Host、Client、离线阅读器和 skill，安装时无需编译。
+从 [公开 Release](https://github.com/xuchen-cloud/pmprd/releases/tag/v0.1.13) 下载 `dsh-ux-review-0.1.13.tgz`，无需 GitHub 登录。先安装 DSH 0.2.2-rc.3。打开「插件 → 添加插件」，填写已构建的 `dsh-ux-review-0.1.13.tgz` 的本地绝对路径或下载链接；安装完成后点击「立即启用」，按 DSH 提示重启。开发者也可添加已构建的本目录。启用后，`ux-prototype` 和 `opentiny-ux` 加入 DSH 的 skill 目录，项目或用户自定义的同名 skill 按 DSH 的优先级覆盖。包内包含构建好的 Host、Client、离线阅读器和 skill，安装时无需编译。
 
 在会话右侧点击「新建标签页 → 打开设计文档」，选择本机或收到的文件，也可拖入。程序按内容识别设计文档；普通 HTML 和已知旧格式先提示「导入为设计文档」。导入副本保存到当前会话目录，同名自动区分，原文件保留。已有稿顶栏的文件夹图标、无法打开时的错误页和会话文件列表都提供打开入口。UTF-8 HTML 文件上限为 50 MB；只读会话不能创建导入副本。
 
 ## 修改流程
+
+已安装旧版时，可让 DSH 使用内置 `plugin_manager` 下载新版 `.tgz`、校验 SHA-256，查询当前 profile，卸载旧包后安装并启用，最后核对实际加载版本；不用另外配置 CLI。完整可复制指令见 [升级说明](https://github.com/xuchen-cloud/pmprd/blob/main/docs/distribution.md#让已安装旧版的-dsh-自己升级)。工作区 HTML 和备份不在插件目录内，升级时保留。
 
 1. 添加或编辑修改意见，按需要修改 PRD。在「交给 AI 修改」中选择本轮意见、是否允许相关 PRD 更新、是否清理完成意见，以及是否生成新版本文件。
 2. 点击「发送到 DSH」或「复制给外部 Agent」。程序先保存、备份并准备工作文件，生成同一份包含意见、目标信息、文件位置和完成命令的提示词。复制不会调用 DSH 模型。

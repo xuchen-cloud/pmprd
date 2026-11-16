@@ -60,7 +60,9 @@ export class ReviewService {
     let task = await this.activeDocumentTask(scope, target, signal);
     if (task && await this.reconcileTask(scope, task, signal)) task = await this.activeDocumentTask(scope, target, signal);
     const snapshot = await this.readTarget(target, signal);
-    return { ...snapshot, activeTask: task ? { ...this.publicTask(task), ownedBySession: task.sessionId === scope.sessionId } : null };
+    // UI freshness is based on bytes. Cloud sync may change ctime without
+    // changing the document; filesystem versions still guard the actual write.
+    return { ...snapshot, version: sha256(snapshot.html), activeTask: task ? { ...this.publicTask(task), ownedBySession: task.sessionId === scope.sessionId } : null };
   }
   async importFile(args, signal) {
     const scope = await this.scope(args.sessionId);
@@ -83,9 +85,9 @@ export class ReviewService {
         // An existing escaping symlink occupies the name, not a destination.
         if (!this.fs.contains(scope.root, target) || this.fs.processPath(target) !== path.join(scope.cwd, name) || await this.fs.stat(target, signal)) continue;
         try {
-          const out = await this.fs.writeText(target, html, { kind: 'createIfAbsent' }, signal, scope.policy);
+          await this.fs.writeText(target, html, { kind: 'createIfAbsent' }, signal, scope.policy);
           const file = this.fs.processPath(target);
-          return { path: file, name: path.basename(file), html, version: out.version, ...(converted ? { report: converted.report } : {}) };
+          return { path: file, name: path.basename(file), html, version: sha256(html), ...(converted ? { report: converted.report } : {}) };
         } catch (error) {
           if (['FS_NOT_OBSERVED', 'FS_ALREADY_EXISTS', 'EEXIST'].includes(error.code)) continue;
           throw error;
@@ -101,7 +103,7 @@ export class ReviewService {
       assert(!await this.activeDocumentTask(scope, target, signal), 'AI 正在修改此文档，完成后才能继续编辑。');
       assert(typeof args.html === 'string' && Buffer.byteLength(args.html) <= LIMIT, 'HTML 内容无效或超过 50 MB。');
       const before = await this.readTarget(target, signal);
-      assert(args.expectedVersion === before.version, '文件已被其他编辑器修改，请重新读取后合并。');
+      assert(args.expectedVersion === sha256(before.html), '文件已被其他编辑器修改，请重新读取后合并。');
       const next = parse(args.html);
       let old;
       try { old = parse(before.html); } catch { /* First explicit import may add protocol metadata. */ }
@@ -110,8 +112,8 @@ export class ReviewService {
         assert(next.revision >= old.revision && equal(next.changes.slice(0, old.changes.length), old.changes), '已有变更记录不能删除或修改。');
         assert((equal(next, old) && sourceOnly(args.html) === sourceOnly(before.html)) || next.revision > old.revision, '文档修改必须附带新的变更记录。');
       }
-      const out = await this.fs.writeText(target, args.html, { kind: 'replaceIfVersion', version: before.version }, signal, scope.policy);
-      return { path: before.path, name: before.name, html: args.html, version: out.version };
+      await this.fs.writeText(target, args.html, { kind: 'replaceIfVersion', version: before.version }, signal, scope.policy);
+      return { path: before.path, name: before.name, html: args.html, version: sha256(args.html) };
     });
   }
   artifact(scope, id, suffix) { return path.join(scope.cwd, `.ux-review-${id}.${suffix}`); }
@@ -226,7 +228,7 @@ export class ReviewService {
     assert(['dsh', 'external'].includes(destination), '修改方式无效。');
     return this.locked(target.targetKey, async () => {
       const snapshot = await this.readTarget(target, signal);
-      assert(snapshot.version === args.expectedVersion, '文件已变化，请保存并重新提交。');
+      assert(sha256(snapshot.html) === args.expectedVersion, '文件已变化，请保存并重新提交。');
       const doc = parse(snapshot.html);
       assert(Array.isArray(args.selectedIds) && args.selectedIds.every(s => typeof s === 'string'), '所选标注无效。');
       const selectedIds = [...new Set(args.selectedIds)];

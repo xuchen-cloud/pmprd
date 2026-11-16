@@ -1,6 +1,6 @@
 {
   "name": "dsh-ux-review",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "单文件 UX / PRD 评审与 DeepSeek Harness 修改工作台",
   "type": "module",
   "main": "lib/index.js",

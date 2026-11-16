@@ -1,5 +1,6 @@
 // Browser-safe canonical document model shared by the workbench, DSH host and CLI.
 import { makePrdPatch, validatePrdPatch, prdPatchDiff, applyPrdOps } from './prd-patch.mjs';
+import { validatePrdAssets } from './prd-assets.mjs';
 export { applyPrdPatch, applyPrdOps } from './prd-patch.mjs';
 export const FORMAT = 'ux-review-document';
 export const START = '<!-- ux-document:start -->';
@@ -96,6 +97,7 @@ export function validate(doc) {
   if (typeof doc.id !== 'string' || !doc.id.trim() || typeof doc.title !== 'string' || typeof doc.prd !== 'string') fail('缺少文档身份、标题或 PRD。');
   if (!Number.isInteger(doc.uxVersion) || doc.uxVersion < 1 || !Number.isInteger(doc.revision) || doc.revision < 0) fail('版本号无效。');
   if (!object(doc.annotations) || !Array.isArray(doc.changes)) fail('标注或变更记录结构无效。');
+  validatePrdAssets(doc.assets);
   if (!Number.isInteger(doc.agentCheckpoint) || doc.agentCheckpoint > doc.revision || doc.agentCheckpoint < 0) fail('Agent 检查点无效。');
   if (!Number.isFinite(Date.parse(doc.createdAt)) || !Number.isFinite(Date.parse(doc.updatedAt))) fail('文档时间无效。');
   if (doc.preferences?.clearResolvedAfterAgent !== undefined && typeof doc.preferences.clearResolvedAfterAgent !== 'boolean') fail('自动清理选项无效。');
@@ -325,6 +327,15 @@ export function recordHuman(before, draft, summary = '', actorName = '产品') {
   validate(before);
   const result = clone(before), at = now(), editor = author({ kind: 'human', name: actorName });
   for (const field of ['title', 'prd', 'preferences', 'annotations', 'design']) if (own(draft, field)) result[field] = clone(draft[field]);
+  // Resources are immutable and retained for undo/history references. History
+  // records the short PRD references, never another copy of the image payload.
+  if (draft.assets) {
+    validatePrdAssets(draft.assets);
+    for (const [key, asset] of Object.entries(before.assets || {})) {
+      if (draft.assets[key] && !same(asset, draft.assets[key])) fail('已有图片资源不能覆盖，请创建新资源。');
+    }
+    result.assets = { ...clone(before.assets || {}), ...clone(draft.assets) };
+  }
   for (const [key, a] of Object.entries(result.annotations)) if (!same(before.annotations[key], a)) result.annotations[key] = stampAnnotation(before.annotations[key], a, editor, at);
   const patch = patchBetween(before, result);
   if (!patch.length) return result;

@@ -241,7 +241,7 @@ test('caller notes/options remain unchanged and explicit new IDs are supported',
 test('copied runtime works without tooling or node_modules', async () => {
   const temporary = await mkdtemp(join(tmpdir(), 'ux-annotate-runtime-'));
   try {
-    for (const name of ['annotate.mjs', 'document.mjs', 'prd-patch.mjs', 'vendor']) await cp(new URL(`../scripts/${name}`, import.meta.url), join(temporary, name), { recursive: true });
+    for (const name of ['annotate.mjs', 'document.mjs', 'prd-patch.mjs', 'prd-assets.mjs', 'vendor']) await cp(new URL(`../scripts/${name}`, import.meta.url), join(temporary, name), { recursive: true });
     const copied = await import(pathToFileURL(join(temporary, 'annotate.mjs')).href);
     assert.equal(copied.annotateHtml(source, [note]).addedIds.length, 1);
   } finally {

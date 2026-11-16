@@ -1,6 +1,6 @@
 /* Project Mind record defaults, with smaller headings for PRD reading.
    Shared by the Markdown reader and the editing surface, including offline HTML. */
-.uxw-prd-editor, .uxw-prd-content, .uxw-prd-menu {
+.uxw-prd-editor, .uxw-prd-content, .uxw-prd-menu, .uxw-prd-table-handles {
   --prd-text: #253042;
   --prd-muted: #697587;
   --prd-border: #e3e7eb;
@@ -69,12 +69,38 @@
 .uxw .uxw-prd-content :is(td,th) :is(p,ul,ol,blockquote,pre), .uxw-prd-editor .uxw-prd-surface :is(td,th) :is(p,ul,ol,blockquote,pre) { margin: .2rem 0; }
 .uxw .uxw-prd-content :is(td,th) > :first-child, .uxw-prd-editor .uxw-prd-surface :is(td,th) > :first-child { margin-top: 0; }
 .uxw .uxw-prd-content :is(td,th) > :last-child, .uxw-prd-editor .uxw-prd-surface :is(td,th) > :last-child { margin-bottom: 0; }
-.uxw .uxw-prd-content img, .uxw-prd-editor .uxw-prd-surface img { display: block; max-width: 100%; height: auto; margin: 12px 0 0; border-radius: 4px; }
+/* ProseMirror appends a resize widget after the last content block on hover. */
+.uxw-prd-editor .uxw-prd-surface :is(td,th) > :has(+ .column-resize-handle:last-child) { margin-bottom: 0; }
+.uxw .uxw-prd-content img, .uxw-prd-editor .uxw-prd-surface img { display: block; max-width: 100%; height: auto; margin: 12px auto 0; border-radius: 4px; }
 .uxw .uxw-prd-content > :first-child, .uxw-prd-editor .uxw-prd-surface > :first-child { margin-top: 0; }
 .uxw .uxw-prd-content > :last-child, .uxw-prd-editor .uxw-prd-surface > :last-child { margin-bottom: 0; }
 
 .uxw-prd-editor { display: flex; flex-direction: column; min-height: 260px; }
-.uxw-prd-editor-header { min-width: 0; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid var(--prd-border); }
+.uxw-prd-image-preview { position: fixed; inset: 0; margin: auto; padding: 12px; max-width: calc(100vw - 40px); max-height: calc(100dvh - 40px); border: 1px solid var(--prd-border); border-radius: 8px; background: var(--uxw-surface, white); color: var(--prd-text); font: 12px/1.4 var(--prd-font); }
+.uxw-prd-image-preview:modal { overscroll-behavior: contain; }
+.uxw-prd-image-preview::backdrop { background: #18202c80; overflow: hidden; overscroll-behavior: contain; }
+.uxw-prd-image-preview > header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 10px; }
+.uxw-prd-image-preview > header > span { min-width: 0; overflow-wrap: anywhere; }
+.uxw-prd-image-preview form { margin: 0; flex: none; }
+.uxw-prd-image-preview button { display: grid; place-items: center; width: 28px; height: 28px; border: 0; border-radius: 4px; background: transparent; color: inherit; cursor: pointer; }
+.uxw-prd-image-preview button:hover { background: var(--prd-subtle); }
+.uxw-prd-image-preview > img { display: block; max-width: 100%; height: auto; margin: auto; }
+.uxw-prd-editor-header {
+  flex-shrink: 0; min-width: 0;
+  padding: 2px 0; border-bottom: 1px solid var(--prd-border);
+  background: var(--uxw-surface, #fff);
+}
+.uxw-prd-editor-scroll { flex: 1; min-height: 0; overflow: auto; overscroll-behavior-block: contain; scrollbar-width: thin; scroll-padding-block-start: 12px; }
+/* The toolbar is a sibling of the scrollport, so neither scrolling nor elastic
+   overscroll moves it. Keep other document tabs on their existing scrollport. */
+.uxw .uxw-document-body:has(> .uxw-prd-section:not([hidden]) .uxw-prd-editor-header) { display: flex; min-height: 0; overflow: hidden; padding: 0; }
+.uxw .uxw-document-body > .uxw-prd-section:not([hidden]):has(.uxw-prd-editor-header) { display: flex; flex-direction: column; flex: 1; min-height: 0; min-width: 0; padding: 0; }
+.uxw .uxw-prd-section > .uxw-prd-editor { flex: 1; min-height: 0; min-width: 0; }
+.uxw .uxw-prd-section .uxw-prd-editor-header { padding: 2px 8px; }
+.uxw .uxw-prd-section .uxw-prd-editor-scroll { padding: 10px 16px 24px; }
+.uxw .uxw-prd-section [data-mode='markdown'] .uxw-prd-editor-scroll { display: flex; flex-direction: column; }
+.uxw .uxw-prd-section .uxw-prd-source { flex: 1; min-height: 0; resize: none; }
+.uxw-prd-editor .uxw-prd-surface :is(p,h1,h2,h3,h4,td,th) { scroll-margin-block-start: 12px; }
 .uxw-prd-toolbar { display: flex; flex-wrap: nowrap; align-items: center; gap: 2px; width: 100%; min-width: 0; overflow-x: auto; overscroll-behavior-inline: contain; scrollbar-width: none; padding: 2px; box-sizing: border-box; }
 .uxw-prd-toolbar > * { flex-shrink: 0; }
 .uxw-prd-toolbar[data-scroll-end='true'] { mask-image: linear-gradient(to right, #000 calc(100% - 12px), transparent); }
@@ -82,8 +108,8 @@
 .uxw-prd-toolbar[data-scroll-start='true'][data-scroll-end='true'] { mask-image: linear-gradient(to right, transparent, #000 12px, #000 calc(100% - 12px), transparent); }
 .uxw-prd-toolbar button {
   border: 1px solid transparent; border-radius: 4px; background: transparent; color: var(--prd-muted);
-  min-width: 26px; min-height: 26px; display: inline-flex; align-items: center; justify-content: center;
-  padding: 4px; font: 11px/1.3 var(--prd-font); cursor: pointer;
+  min-width: 24px; min-height: 24px; display: inline-flex; align-items: center; justify-content: center;
+  padding: 3px; font: 11px/1.3 var(--prd-font); cursor: pointer;
 }
 .uxw-prd-toolbar button[aria-pressed='true'] { color: #334f70; background: #e8eef5; box-shadow: inset 0 -2px #6c8098; }
 .uxw-prd-toolbar button[aria-disabled='true'], .uxw-prd-toolbar button:disabled { color: #a6aeb9; cursor: default; }
@@ -92,7 +118,11 @@
 .uxw .uxw-prd-editor .uxw-prd-surface:focus-visible, .uxw-prd-editor .uxw-prd-surface:focus-visible { outline: none; box-shadow: none; }
 .uxw-prd-editor .uxw-prd-source { display: block; width: 100%; min-height: 55vh; resize: vertical; border: 1px solid var(--prd-border); border-radius: 6px; padding: 12px; background: #fcfcfd; color: var(--prd-text); font: 13px/1.7 ui-monospace, SFMono-Regular, Consolas, monospace; tab-size: 2; box-sizing: border-box; }
 .uxw-prd-editor .uxw-prd-source:focus-visible { outline: 1px solid #7e91a6; outline-offset: 1px; box-shadow: 0 0 0 3px #6686a709; }
-.uxw-prd-editor .uxw-prd-surface .tableWrapper { width: 100%; max-width: 100%; min-width: 0; overflow-x: auto; overscroll-behavior-inline: contain; contain: inline-size; margin: 12px 0 0; padding-bottom: 2px; }
+.uxw-prd-editor .uxw-prd-surface .tableWrapper {
+  width: 100%; max-width: 100%; min-width: 0;
+  overflow-x: auto; overscroll-behavior-inline: contain; contain: inline-size;
+  margin: 24px 0 0; padding-bottom: 2px;
+}
 .uxw-prd-editor .uxw-prd-surface .tableWrapper table { margin: 0; table-layout: fixed; }
 .uxw-prd-editor .uxw-prd-surface .column-resize-handle { position: absolute; inset: -1px -2px -1px auto; width: 4px; background: #91a7be; opacity: 0; pointer-events: none; }
 .uxw-prd-editor .uxw-prd-surface :is(td,th):hover > .column-resize-handle { opacity: .6; }
@@ -101,20 +131,60 @@
 .uxw-prd-editor .uxw-prd-surface .ProseMirror-selectednode { outline: 1px solid #aabbd0; outline-offset: 2px; border-radius: 4px; }
 .uxw-prd-editor .uxw-prd-surface .uxw-prd-raw { white-space: pre-wrap; color: #6b7280; border-style: dashed; font-size: 11px; }
 .uxw-prd-image-placeholder { display: inline-block; border: 1px dashed #cbd2da; border-radius: 4px; padding: 8px; font-size: 12px; color: var(--prd-muted); }
+.uxw-prd-editor .uxw-prd-surface .uxw-prd-image { margin: 12px 0 0; max-width: 100%; }
+.uxw-prd-editor .uxw-prd-surface .uxw-prd-image:first-child { margin-top: 0; }
+.uxw-prd-image-frame { position: relative; max-width: 100%; margin-inline: auto; border-radius: 4px; }
+.uxw-prd-editor .uxw-prd-surface .uxw-prd-image-frame img { width: 100%; margin: 0; }
+.uxw-prd-editor .uxw-prd-surface .uxw-prd-image.ProseMirror-selectednode { outline: none; }
+.uxw-prd-image.ProseMirror-selectednode .uxw-prd-image-frame { box-shadow: 0 0 0 1px #aabbd0; }
+.uxw-prd-image-handle {
+  position: absolute; bottom: -12px; width: 24px; height: 24px; padding: 0; border: 0; background: transparent;
+  display: grid; place-items: center; visibility: hidden; touch-action: none; -webkit-user-select: none; user-select: none;
+}
+.uxw-prd-image-handle.is-left { left: -12px; cursor: nesw-resize; }
+.uxw-prd-image-handle.is-right { right: -12px; cursor: nwse-resize; }
+.uxw-prd-image-handle::after { content: ''; width: 6px; height: 6px; box-sizing: border-box; border: 1px solid #8095ad; border-radius: 2px; background: #fff; }
+.uxw-prd-surface[contenteditable='true'] .uxw-prd-image:is(.ProseMirror-selectednode, [data-resizing]) .uxw-prd-image-handle { visibility: visible; }
+.uxw-prd-image-handle:is(:hover, :focus-visible)::after { background: #e8eef5; border-color: #526f91; }
+.uxw-prd-image-handle:focus-visible { outline: 1px solid #5e7896; outline-offset: -4px; border-radius: 5px; }
+@media (pointer: coarse) {
+  .uxw-prd-image-handle { width: 36px; height: 36px; bottom: -18px; }
+  .uxw-prd-image-handle.is-left { left: -18px; }
+  .uxw-prd-image-handle.is-right { right: -18px; }
+}
 .uxw-prd-status { min-height: 0; margin-top: 6px; color: var(--prd-muted); font-size: 11px; }
 .uxw-prd-status:empty { margin: 0; }
+.uxw-prd-table-handles { position: fixed; inset: 0; z-index: 40; pointer-events: none; }
+.uxw-prd-table-handle {
+  position: absolute; display: grid; place-items: center; min-width: 24px; min-height: 24px; padding: 0;
+  border: 1px solid transparent; border-radius: 4px; background: transparent; color: var(--prd-muted);
+  pointer-events: auto; cursor: pointer;
+}
+.uxw-prd-table-handle::before {
+  content: ''; position: absolute; left: 50%; top: 50%; width: 10px; height: 18px;
+  transform: translate(-50%, -50%); border-radius: 3px; background: var(--prd-subtle); z-index: -1;
+}
+.uxw-prd-table-handle.is-col::before { width: 18px; height: 10px; }
+.uxw-prd-table-handle:hover, .uxw-prd-table-handle[aria-expanded='true'] { color: #334f70; }
+.uxw-prd-table-handle:is(:hover, :focus-visible, [aria-expanded='true'])::before { background: #e8eef5; }
+.uxw-prd-table-handle:focus-visible { outline: 1px solid #5e7896; outline-offset: -1px; }
+@media (pointer: coarse) {
+  .uxw .uxw-prd-section .uxw-prd-editor-scroll { padding-left: 32px; }
+  .uxw-prd-editor .uxw-prd-surface .tableWrapper { margin-top: 32px; }
+  .uxw-prd-table-handle { min-width: 44px; min-height: 44px; }
+}
 .uxw-prd-menu-anchor { position: fixed; width: 0; height: 0; pointer-events: none; }
 .uxw-prd-menu { position: fixed; inset: auto; margin: 0; padding: 4px; z-index: 1000; width: 176px; max-width: calc(100vw - 24px); max-height: calc(100vh - 24px); overflow-y: auto; border: 1px solid #e3e5e8; border-radius: 8px; background: #fff; box-shadow: 0 22px 44px #0f0f0f1f, 0 8px 18px #0f0f0f0f; box-sizing: border-box; user-select: none; -webkit-user-select: none; }
+.uxw-prd-table-menu { width: 128px; }
 .uxw-prd-menu hr { height: 0; margin: 3px 2px; border: 0; border-top: 1px solid var(--prd-border); }
 .uxw-prd-menu-label { font-size: 11px; font-weight: 500; color: #9299a2; padding: 3px 6px; }
 .uxw-prd-menu-group { display: grid; grid-template-columns: 1fr; gap: 2px; }
-.uxw-prd-menu button { display: flex; align-items: center; gap: 8px; min-height: 32px; min-width: 24px; padding: 7px 9px; border: 1px solid transparent; border-radius: 5px; background: transparent; color: #5b626b; text-align: left; font: 12px/18px var(--prd-font); cursor: pointer; }
+.uxw-prd-menu button { display: flex; align-items: center; gap: 6px; box-sizing: border-box; min-height: 24px; min-width: 24px; padding: 2px 7px; border: 1px solid transparent; border-radius: 4px; background: transparent; color: #5b626b; text-align: left; font: 11px/18px var(--prd-font); cursor: pointer; }
 .uxw-prd-menu button svg { flex: 0 0 14px; }
 .uxw-prd-menu button > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.uxw-prd-menu-group.is-quick button { justify-content: center; gap: 2px; min-height: 24px; padding: 2px 3px; font-size: 11px; line-height: 18px; }
-.uxw-prd-menu-group.is-inline { padding: 2px; }
-.uxw-prd-menu-group.is-inline button { justify-content: center; padding: 0; min-height: 26px; aspect-ratio: 1; }
-.uxw-prd-menu-group.is-grid button { gap: 4px; min-height: 26px; padding: 3px 5px; font-size: 11px; line-height: 18px; }
+.uxw-prd-menu-group.is-quick button { justify-content: center; gap: 2px; padding-inline: 3px; }
+.uxw-prd-menu-group.is-inline button { justify-content: center; padding: 0; }
+.uxw-prd-menu-group.is-grid button { gap: 4px; padding-inline: 5px; }
 .uxw-prd-menu button[data-active='true'] { background: #f0f1f2; color: #252a30; }
 .uxw-prd-menu .uxw-prd-block-trigger { width: 100%; background: #f0f1f2; }
 .uxw-prd-block-trigger > span, .uxw-prd-menu-item > span { flex: 1; }

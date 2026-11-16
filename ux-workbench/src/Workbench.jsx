@@ -19,6 +19,7 @@ import AnnotationIndex from './AnnotationIndex.jsx';
 import { PrdReferencesContent } from './PrdReference.jsx';
 import { insertAnnotationReference, getAnnotationReferences, getReferencedIds } from './prd-references.mjs';
 import { copyTextWhenReady } from './copy-text.mjs';
+import { resolvePrdImageHtml } from './prd-image-html.mjs';
 
 const LABELS = { explanation: '交互说明', 'change-request': '修改意见' };
 const KIND = annotation => annotation.kind === 'change-request' ? 'change-request' : 'explanation';
@@ -51,17 +52,17 @@ function prdPresentation(text) {
   }).join('\n');
   return { source, headings };
 }
-function markdown(text, withHeadings = false) {
+function markdown(text, withHeadings = false, assets) {
   const presentation = withHeadings ? prdPresentation(text) : null;
   let html = marked.parse(presentation?.source ?? text ?? '', { breaks: true });
   if (withHeadings) { let index = 0; html = html.replace(/<h([1-6])>([\s\S]*?)<\/h\1>/g, (_, n, title) => `<h${n} id="${presentation.headings[index++]?.id || slug(title.replace(/<[^>]+>/g, ''))}">${title}</h${n}>`); }
-  return DOMPurify.sanitize(html, { USE_PROFILES: { html: true }, ADD_ATTR: ['target'] });
+  return DOMPurify.sanitize(resolvePrdImageHtml(html, assets), { USE_PROFILES: { html: true }, ADD_ATTR: ['target'] });
 }
 function IconButton({ icon: Icon, label, active, className = '', ...props }) {
   return <Tooltip label={label}><button type="button" className={`uxw-icon ${active ? 'is-active' : ''} ${className}`} aria-label={label} aria-pressed={active === undefined ? undefined : active} {...props}><Icon size={17} strokeWidth={1.8} /></button></Tooltip>;
 }
-function Markdown({ value, className = '', headings = false, ...props }) {
-  return <div className={`uxw-markdown ${className}`} dangerouslySetInnerHTML={{ __html: markdown(value, headings) }} {...props} />;
+function Markdown({ value, assets, className = '', headings = false, ...props }) {
+  return <div className={`uxw-markdown ${className}`} dangerouslySetInnerHTML={{ __html: markdown(value, headings, assets) }} {...props} />;
 }
 function ChangePrdDiff({ change }) {
   const diff = useMemo(() => prdChangeDiff(change), [change]);
@@ -384,7 +385,7 @@ export default function Workbench({ host, readOnly: permanentlyReadOnly = false,
     }
     jumpToPrd(referenceId);
   };
-  const updatePrd = value => { if (canEdit()) setDoc(previous => ({ ...previous, prd: value })); };
+  const updatePrd = (value, resources) => { if (canEdit()) setDoc(previous => ({ ...previous, prd: value, ...(resources?.assets ? {assets:resources.assets} : {}) })); };
   useEffect(() => {
     if (!prdTarget || tab !== 'prd' || panel === 'hidden') return;
     const frame = requestAnimationFrame(() => {
@@ -740,7 +741,7 @@ export default function Workbench({ host, readOnly: permanentlyReadOnly = false,
           <IconButton icon={panel === 'full' ? Minimize2 : Maximize2} label={panel === 'full' ? '返回侧栏' : `全屏查看 ${{ prd: 'PRD', annotations: '标注', changes: '变更' }[tab]}`} onClick={() => setPanel(panel === 'full' ? 'sidebar' : 'full')} /><IconButton icon={PanelRightClose} label="收起 PRD" onClick={() => setPanel('hidden')} />
         </div>
         <div className="uxw-document-body" ref={prdScrollRef}>
-          <section role="tabpanel" aria-labelledby={`${tabsId}-prd`} hidden={tab !== 'prd'} tabIndex={readOnly && tab === 'prd' ? 0 : undefined} className="uxw-prd-section">{!readOnly && PrdEditor ? <PrdEditor key={doc.id} value={doc.prd} annotations={doc.annotations} onLocateAnnotation={locateFromPrd} onRegisterReferenceActions={registerPrdReferences} onChange={updatePrd} /> : !readOnly ? <textarea className="uxw-prd-editor" aria-label="PRD 正文" value={doc.prd} onChange={e => updatePrd(e.target.value)} placeholder="# 产品需求\n\n记录目标、用户流程和业务规则…" /> : doc.prd ? <PrdReferencesContent value={doc.prd} annotations={doc.annotations} onLocateAnnotation={locateFromPrd} onRegisterReferenceActions={registerPrdReferences} renderMarkdown={(source, key) => <Markdown key={key} value={source} className="uxw-prd-content" headings />} /> : <div className="uxw-soft-empty"><FileText size={24} /><p>还没有需求说明</p></div>}</section>
+          <section role="tabpanel" aria-labelledby={`${tabsId}-prd`} hidden={tab !== 'prd'} tabIndex={readOnly && tab === 'prd' ? 0 : undefined} className="uxw-prd-section">{!readOnly && PrdEditor ? <PrdEditor key={doc.id} value={doc.prd} assets={doc.assets} annotations={doc.annotations} onLocateAnnotation={locateFromPrd} onRegisterReferenceActions={registerPrdReferences} onChange={updatePrd} /> : !readOnly ? <textarea className="uxw-prd-editor" aria-label="PRD 正文" value={doc.prd} onChange={e => updatePrd(e.target.value)} placeholder="# 产品需求\n\n记录目标、用户流程和业务规则…" /> : doc.prd ? <PrdReferencesContent value={doc.prd} annotations={doc.annotations} onLocateAnnotation={locateFromPrd} onRegisterReferenceActions={registerPrdReferences} renderMarkdown={(source, key) => <Markdown key={key} value={source} assets={doc.assets} className="uxw-prd-content" headings />} /> : <div className="uxw-soft-empty"><FileText size={24} /><p>还没有需求说明</p></div>}</section>
           <section role="tabpanel" aria-labelledby={`${tabsId}-annotations`} hidden={tab !== 'annotations'}><AnnotationIndex key={doc.id} annotations={annotations} numbered={numbered} measured={measured} activeId={activeId} active={tab === 'annotations' && panel !== 'hidden'} edits={edits} onLocate={locateFromIndex} onContextMenu={menuFor} renderBody={body => <Markdown value={body || '*未填写内容*'} className="uxw-index-body" />} /></section>
           <section role="tabpanel" aria-labelledby={`${tabsId}-changes`} tabIndex={tab === 'changes' ? 0 : undefined} hidden={tab !== 'changes'} className="uxw-changes">{!doc.changes.length && !doc.legacyHistory && <div className="uxw-soft-empty"><History size={24} /><p>保存修改后，变更记录会显示在这里。</p></div>}{[...doc.changes].reverse().map(change => <details key={change.id} open={change === doc.changes.at(-1)} className="uxw-change"><summary><span className={`uxw-change-dot is-${change.actor}`} /><div><strong>{change.summary}</strong><small>r{change.revision} · {({ agent: 'AI', human: '人工', system: '系统' }[change.actor] || change.actor || '系统')} · {time(change.at)}</small></div><ChevronDown size={13} /></summary><ul>{(change.details || []).map((detail, i) => <li key={i}>{detail}</li>)}</ul><ChangePrdDiff change={change} />{(change.patch || []).filter(p => p.path?.startsWith('/annotations/')).map((patch, i) => <div key={i} className="uxw-patch"><span>{patch.op === 'remove' ? '删除标注' : patch.op === 'add' ? '新增标注' : '更新标注'}</span>{patch.before?.body && <del>{patch.before.body}</del>}{patch.value?.body && <ins>{patch.value.body}</ins>}</div>)}</details>)}<LegacyHistory history={doc.legacyHistory} /></section>
         </div>

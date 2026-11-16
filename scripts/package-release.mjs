@@ -41,6 +41,7 @@ try {
   for (const required of ['lib/index.js', 'lib/client.js', 'cordis.patch.yml',
     'skills/ux-prototype/SKILL.md', 'skills/opentiny-ux/SKILL.md',
     'skills/ux-prototype/scripts/uxdoc.mjs', 'skills/ux-prototype/scripts/edit-session.mjs',
+    'skills/ux-prototype/scripts/prd-assets.mjs',
     'skills/ux-prototype/scripts/vendor/static-html.mjs', 'skills/ux-prototype/scripts/vendor/markdown-lexer.mjs']) {
     if (!included.has(required)) throw new Error(`Release missing ${required}`);
   }

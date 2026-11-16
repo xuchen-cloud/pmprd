@@ -2,11 +2,11 @@
 
 把交互原型、当前 PRD、交互说明、修改意见与变更历史保存在同一份 HTML 中。在 DeepSeek Harness 中评审和修改，也可导出完整 HTML 给同事离线阅读。
 
-当前插件 **dsh-ux-review 0.1.12**，适配 **DSH 0.2.2-rc.3**。发送到 DSH 与复制给外部 Agent 共用直接修改提示词，通过一次 `finish` 完成差异记录和交付。
+当前插件 **dsh-ux-review 0.1.13**，适配 **DSH 0.2.2-rc.3**。新增表格抓手、紧凑固定工具栏与图片缩放；图片使用文档内资源短引用。发送到 DSH 与复制给外部 Agent 共用直接修改提示词，通过一次 `finish` 完成差异记录和交付。
 
 ## 新电脑安装
 
-1. 安装 DSH 0.2.2-rc.3，从 [GitHub Release](https://github.com/xuchen-cloud/pmprd/releases/tag/v0.1.12) 下载 `dsh-ux-review-0.1.12.tgz`（公开下载，无需登录）。
+1. 安装 DSH 0.2.2-rc.3，从 [GitHub Release](https://github.com/xuchen-cloud/pmprd/releases/tag/v0.1.13) 下载 `dsh-ux-review-0.1.13.tgz`（公开下载，无需登录）。
 2. 在 DSH「插件 → 添加插件」填写安装包的本地绝对路径或下载链接。
 3. 安装后点击「立即启用」，按 DSH 提示重启。
 4. 在会话右侧「新建标签页 → 打开设计文档」选择 HTML。
@@ -15,7 +15,9 @@
 
 也可以直接把这句话发给对方 DSH：
 
-> 请从 https://github.com/xuchen-cloud/pmprd/releases/tag/v0.1.12 下载 dsh-ux-review-0.1.12.tgz，检查本机 DSH 是否兼容 0.2.2-rc.3，然后安装到当前正在使用的 profile 并启用插件；确认内置的 ux-prototype 和 opentiny-ux 两份 skill 已加载，并告诉我是否需要重启。
+> 请从 https://github.com/xuchen-cloud/pmprd/releases/tag/v0.1.13 下载 dsh-ux-review-0.1.13.tgz，检查本机 DSH 是否兼容 0.2.2-rc.3，然后安装到当前正在使用的 profile 并启用插件；确认内置的 ux-prototype 和 opentiny-ux 两份 skill 已加载，并告诉我是否需要重启。
+
+已安装旧版时，将 [升级指令](docs/distribution.md#让已安装旧版的-dsh-自己升级) 发给那台电脑上的 DSH，由它使用内置 `plugin_manager` 下载、校验、替换旧包并核对加载结果。
 
 ## 开发和打包
 

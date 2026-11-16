@@ -6,6 +6,8 @@
 
 `packages/dsh-ux-review/src/` 适配 DSH 权限、文件读写、会话与任务回执；`ux-workbench/src/` 实现通用界面和离线阅读器。设计资源独立维护在 `skills/opentiny-ux/`。
 
+PRD 图片使用 `![说明](asset:img-ID)` 短引用，调整尺寸后使用带 `width` / `height` 的标准 `<img>` 标签。图片数据保存在文档 `assets["img-ID"] = { name, dataUrl }` 中，由 `prd-assets.mjs` 注册、去重和校验；富文本与离线阅读器负责解析引用。资源 ID 不可覆盖，删除图片只删除正文引用，保留资源供撤销及历史使用。变更记录只记录 PRD 的短引用，不重复保存图片数据。
+
 ## 本地开发
 
 ```sh
@@ -28,6 +30,10 @@ node --test tests/prd-reference-workbench.test.mjs tests/export.test.mjs
 ```
 
 浏览器测试使用 Playwright 和本机 Chrome（`channel: 'chrome'`）。其余测试按实际改动范围选择；`npm test` 运行工作台全部测试。Host 测试使用临时文件与假的 Agent，不调用真实模型。`packages/dsh-ux-review/scripts/verify-installed-sdk.cjs` 接受已安装 DSH SDK 的 `node_modules` 路径，执行隔离的接口和 skill 注册检查。
+
+0.1.13 已在 macOS 的 DeepSeek Harness 0.2.2-rc.3 中通过真实 `.tgz` 安装验证：插件显示新版且运行；独立测试稿完成图片拖动缩放、原图预览、下载原始字节、删除撤销、原生文件选择器插图、重复资源去重、表格抓手新增行和右键新增列；滚动正文时工具栏固定。保存并关闭后从磁盘重新打开，图片、尺寸、短引用、表格和变更记录完整保留。未调用真实模型；Windows 原生 UI 未验证。
+
+客户端文件版本使用 HTML 内容 SHA-256，避免云同步或文件属性变化造成误报；写入仍使用 Host 最新 `FsVersion` 的 `replaceIfVersion`，拒绝检查后发生的并发修改。Host 回归测试分别覆盖元数据变化、正文冲突及检查到写入之间的竞争。
 
 ## 发布与运行中的插件
 

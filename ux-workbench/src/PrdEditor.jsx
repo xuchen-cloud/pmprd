@@ -1,21 +1,35 @@
 import React, { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { EditorContent, useEditor } from '@tiptap/react';
-import { TextSelection } from '@tiptap/pm/state';
+import { TextSelection, NodeSelection } from '@tiptap/pm/state';
+import { CellSelection } from '@tiptap/pm/tables';
 import {
   Bold, Italic, Strikethrough, Code2, Highlighter, Heading1, Heading2, Heading3, Heading4,
   List, ListOrdered, ListTodo, Quote, Table2, ImagePlus, Minus, Type, MoreHorizontal,
   Copy, Scissors, ClipboardPaste, ArrowUpToLine, ArrowDownToLine, ArrowLeftToLine,
-  ArrowRightToLine, Rows2, Columns2, Trash2, Combine, Split, PanelTop, Undo2, Redo2, FileCode2, ChevronRight, Check,
+  ArrowRightToLine, Rows2, Columns2, Trash2, Combine, Split, PanelTop, Undo2, Redo2, FileCode2, ChevronRight, Check, Expand, Download, X,
 } from 'lucide-react';
 import Tooltip from './Tooltip.jsx';
 import { cleanPrdPaste, createPrdSourceLedger, prdExtensions, readEmbeddedImage } from './prd-markdown.mjs';
 import { PrdReferenceContext, locatePrdReference } from './PrdReference.jsx';
 import { getAnnotationReferences, insertAnnotationReference } from './prd-references.mjs';
 import PrdReferencePicker from './PrdReferencePicker.jsx';
+import PrdTableHandles from './PrdTableHandles.jsx';
+import { storePrdImage, prdImageSource, isPrdImageData } from '../../skills/ux-prototype/scripts/prd-assets.mjs';
+import { resolvePrdImageHtml } from './prd-image-html.mjs';
 import './prd-editor.css';
 
 const nativeFocusGroup = () => typeof HTMLElement !== 'undefined' && 'focusGroup' in HTMLElement.prototype;
+
+function isFirstTableRow(selection) {
+  const endpoints = selection instanceof CellSelection ? [selection.$anchorCell, selection.$headCell] : [selection.$from, selection.$to];
+  return endpoints.every($pos => {
+    for (let depth = $pos.depth; depth > 0; depth--) {
+      if ($pos.node(depth).type.spec.tableRole === 'row') return $pos.index(depth - 1) === 0;
+    }
+    return false;
+  });
+}
 
 function useToolbarNavigation(ref, enabled, mode) {
   useEffect(() => {
@@ -128,13 +142,15 @@ function EditorMenu({ state, groups, onClose, restoreFocus }) {
   useLayoutEffect(() => {
     const node = panel.current;
     if (!node || !state) return;
-    const anchor = point.current;
+    const anchor = state.axis ? state.origin : point.current;
     let openingFrame = 0, waitingForRelease = false;
     const position = () => {
       if (popover && CSS.supports('position-area', 'block-end')) return;
       const box = node.getBoundingClientRect();
-      node.style.left = `${Math.max(8, Math.min(state.x, innerWidth - box.width - 8))}px`;
-      node.style.top = `${Math.max(8, Math.min(state.y, innerHeight - box.height - 8))}px`;
+      const rect = state.axis ? anchor.getBoundingClientRect() : null;
+      const x = rect ? rect.left : state.x, y = rect ? rect.bottom + 4 : state.y;
+      node.style.left = `${Math.max(8, Math.min(x, innerWidth - box.width - 8))}px`;
+      node.style.top = `${Math.max(8, Math.min(y + box.height <= innerHeight - 8 || !rect ? y : rect.top - box.height - 4, innerHeight - box.height - 8))}px`;
     };
     if (!focusgroup) group.current?.querySelectorAll('button').forEach(button => { button.tabIndex = -1; });
     const enter = () => group.current?.querySelector('button:not(:disabled)')?.focus();
@@ -143,13 +159,17 @@ function EditorMenu({ state, groups, onClose, restoreFocus }) {
       if (event.newState === 'closed') onClose();
       else if (state.keyboard) enter();
     };
-    const outside = event => { if (!node.contains(event.target)) close(false); };
+    const outside = event => { if (!node.contains(event.target) && !(state.axis && state.origin.contains(event.target))) close(false); };
     const outsideFocus = event => { if (!node.contains(event.target) && event.target !== state.origin) close(false); };
     const escape = event => { if (event.key === 'Escape' && !event.target.closest('.uxw-prd-submenu')) { event.preventDefault(); event.stopPropagation(); close(true); } };
     const show = () => {
       openingFrame = 0;
       if (!node.isConnected) return;
-      if (popover) node.showPopover({ source: anchor });
+      if (popover) {
+        const alreadyOpen = node.matches(':popover-open');
+        node.showPopover({ source: anchor });
+        if (alreadyOpen && state.keyboard) enter();
+      }
       position();
     };
     const afterRelease = event => {
@@ -200,8 +220,8 @@ function EditorMenu({ state, groups, onClose, restoreFocus }) {
   };
   const body = <>
     <span ref={point} className="uxw-prd-menu-anchor" style={{ left: state.x, top: state.y, anchorName: id }} />
-    <div ref={panel} className="uxw-prd-menu" popover={popover ? 'auto' : undefined} style={{ positionAnchor: id }}>
-      <div ref={group} focusgroup="menu nomemory" role="menu" aria-label="PRD 编辑菜单" onKeyDown={onKeyDown}
+    <div ref={panel} id={state.id} className={`uxw-prd-menu${state.axis ? ' uxw-prd-table-menu' : ''}`} popover={popover ? 'auto' : undefined} style={{ positionAnchor: state.axis ? state.anchorName : id }}>
+      <div ref={group} focusgroup="menu nomemory" role="menu" aria-label={state.label || 'PRD 编辑菜单'} onKeyDown={onKeyDown}
         onFocusCapture={event => {
           if (!event.target.closest('.uxw-prd-block-picker')) {
             const submenu=panel.current?.querySelector('.uxw-prd-submenu');
@@ -229,9 +249,23 @@ function EditorMenu({ state, groups, onClose, restoreFocus }) {
   return popover ? body : createPortal(body, document.body);
 }
 
-export default function PrdEditor({ value = '', onChange, readOnly = false, annotations = {}, onLocateAnnotation, onRegisterReferenceActions }) {
+function ImagePreview({ image, onClose }) {
+  const dialog = useRef(null);
+  useEffect(() => {
+    const node = dialog.current;
+    node.showModal();
+    return () => node.close();
+  }, []);
+  return <dialog ref={dialog} className="uxw-prd-image-preview" aria-label="查看原图" closedby="any" onClose={onClose}>
+    <header><span>{image.alt || '图片'}</span><form method="dialog"><button type="submit" autoFocus aria-label="关闭原图"><X size={16} aria-hidden="true" /></button></form></header>
+    <img src={image.src} alt={image.alt || '原图'} />
+  </dialog>;
+}
+
+export default function PrdEditor({ value = '', assets, onChange, readOnly = false, annotations = {}, onLocateAnnotation, onRegisterReferenceActions }) {
   const [mode, setMode] = useState('rich'), [menu, setMenu] = useState(null), [status, setStatus] = useState('');
   const [imageBusy, setImageBusy] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
   const rightPress = useRef(null);
   useEffect(() => {
     const release = event => {if(event.button === 2 && rightPress.current) rightPress.current.down = false;};
@@ -248,12 +282,25 @@ export default function PrdEditor({ value = '', onChange, readOnly = false, anno
   const referenceSelection = useRef(null), sourceCursor = useRef(0);
   const actions = useRef({});
   const root = useRef(null), pendingReference = useRef(null), [selectedReferenceId, setSelectedReferenceId] = useState(null);
-  const extensions = useMemo(prdExtensions, []);
+  const imageAssets = useRef(assets || {});
+  if (assets) imageAssets.current = assets;
+  const extensions = useMemo(() => prdExtensions({ getAssets: () => imageAssets.current }), []);
   const editor = useEditor({
     extensions, content: '', editable: !readOnly,
     editorProps: {
       attributes: { class: 'uxw-prd-surface', role: 'textbox', 'aria-label': 'PRD 富文本正文', 'aria-multiline': 'true', spellcheck: 'false' },
-      transformPastedHTML: cleanPrdPaste,
+      scrollThreshold: { top: 12, bottom: 12, left: 0, right: 0 },
+      scrollMargin: { top: 12, bottom: 12, left: 0, right: 0 },
+      transformPastedHTML: html => {
+        const template = document.createElement('template');
+        template.innerHTML = cleanPrdPaste(resolvePrdImageHtml(html, imageAssets.current));
+        for (const image of template.content.querySelectorAll('img[src]')) {
+          if (!isPrdImageData(image.getAttribute('src'))) continue;
+          const stored = storePrdImage(imageAssets.current, image.getAttribute('src'), image.alt || '图片');
+          imageAssets.current = stored.assets; image.setAttribute('src', stored.source);
+        }
+        return template.innerHTML;
+      },
       handlePaste: (_view, event) => {
         const images = [...(event.clipboardData?.files || [])].filter(file => file.type.startsWith('image/'));
         if (images.length) { event.preventDefault(); actions.current.insertImages(images); return true; }
@@ -277,7 +324,7 @@ export default function PrdEditor({ value = '', onChange, readOnly = false, anno
     onUpdate: ({ editor: instance }) => {
       if (latest.current.readOnly) return;
       const next = ledger.current.serialize(instance);
-      if (next !== current.current) { current.current = next; richSource.current = next; latest.current.onChange?.(next); }
+      if (next !== current.current) { current.current = next; richSource.current = next; latest.current.onChange?.(next, { assets: imageAssets.current }); }
     },
     onSelectionUpdate: () => refresh(count => count + 1),
     onTransaction: () => refresh(count => count + 1),
@@ -321,7 +368,12 @@ export default function PrdEditor({ value = '', onChange, readOnly = false, anno
       const size = editor.state.doc.content.size;
       const target = initialSource === current.current ? selection : editor.state.selection;
       const from = Math.min(target.from, size), to = Math.min(target.to, size);
-      editor.chain().focus().setTextSelection({ from, to }).insertContent(images.map(attrs => ({ type: 'image', attrs }))).run();
+      const content = images.map(attrs => {
+        const stored = storePrdImage(imageAssets.current, attrs.src, attrs.alt);
+        imageAssets.current = stored.assets;
+        return { type: 'image', attrs: { ...attrs, src: stored.source } };
+      });
+      editor.chain().focus().setTextSelection({ from, to }).insertContent(content).run();
       setStatus(`已插入 ${images.length} 张图片`);
     } catch (error) { setStatus(error.message); }
     finally { pendingImages.current--; if (!editor.isDestroyed) setImageBusy(pendingImages.current > 0); }
@@ -369,23 +421,57 @@ export default function PrdEditor({ value = '', onChange, readOnly = false, anno
       }
     } catch { setStatus('无法访问剪贴板，请使用 Ctrl / ⌘ + C、X 或 V。'); }
   };
-  const groups = editor ? [
+  const tableCommand = (label, icon, method) => ({ label, icon, run: () => menu.run(method) });
+  const selectedImageSource = menu?.image && (prdImageSource(imageAssets.current, menu.image.attrs.src) || (isPrdImageData(menu.image.attrs.src) ? menu.image.attrs.src : null));
+  const openImage = download => {
+    if (!selectedImageSource) return;
+    if (!download) {
+      setImagePreview({src:selectedImageSource, alt:menu.image.attrs.alt});
+      return;
+    }
+    const [header, data] = selectedImageSource.split(','), mime = header.slice(5, header.indexOf(';'));
+    const blob = new Blob([Uint8Array.from(atob(data), character => character.charCodeAt(0))], {type:mime});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a'); link.href = url;
+    link.download = `${menu.image.attrs.alt || '图片'}.${mime.split('/')[1].replace('jpeg', 'jpg')}`;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  };
+  const cellActions = editor && menu?.kind === 'table' ? [
+    ...(editor.can().mergeCells() ? [command('合并单元格', Combine, 'mergeCells')] : []),
+    ...(editor.can().splitCell() ? [command('拆分单元格', Split, 'splitCell')] : []),
+    ...(isFirstTableRow(editor.state.selection) ? [command('切换首行表头', PanelTop, 'toggleHeaderRow')] : []),
+  ] : [];
+  const groups = menu?.axis ? [
+    { key: 'table-axis-insert', items: menu.axis === 'row' ? [
+      tableCommand('上方插入行', ArrowUpToLine, 'addRowBefore'), tableCommand('下方插入行', ArrowDownToLine, 'addRowAfter'),
+    ] : [
+      tableCommand('左侧插入列', ArrowLeftToLine, 'addColumnBefore'), tableCommand('右侧插入列', ArrowRightToLine, 'addColumnAfter'),
+    ] },
+    { key: 'table-axis-delete', separator: false, items: [{ ...tableCommand(menu.axis === 'row' ? '删除当前行' : '删除当前列', Trash2, menu.axis === 'row' ? 'deleteRow' : 'deleteColumn'), danger: true }] },
+  ] : menu?.kind === 'image' ? [{key:'image', items:[
+    {label:'查看原图', icon:Expand, disabled:!selectedImageSource, run:() => openImage(false)},
+    {label:'下载图片', icon:Download, disabled:!selectedImageSource, run:() => openImage(true)},
+    ...(!readOnly ? [{label:'删除图片', icon:Trash2, danger:true, run:() => {
+      if (editor.state.doc === menu.image.doc) editor.chain().focus().setNodeSelection(menu.image.pos).deleteSelection().run();
+    }}] : []),
+  ]}] : editor ? [
     { key: 'clipboard', layout: 'is-quick', columns: 3, items: [
-      { label: '剪切', icon: Scissors, disabled: readOnly || editor.state.selection.empty, run: () => clipboard('cut') },
       { label: '复制', icon: Copy, disabled: editor.state.selection.empty, run: () => clipboard('copy') },
+      { label: '剪切', icon: Scissors, disabled: readOnly || editor.state.selection.empty, run: () => clipboard('cut') },
       { label: '粘贴', icon: ClipboardPaste, disabled: readOnly, run: () => clipboard('paste') },
     ] },
     ...(!readOnly ? [
-      ...(editor.isActive('table') && editor.state.selection.empty ? [{ key: 'table-insert', items: [
-        command('上方插入行', ArrowUpToLine, 'addRowBefore'), command('下方插入行', ArrowDownToLine, 'addRowAfter'),
-        command('左侧插入列', ArrowLeftToLine, 'addColumnBefore'), command('右侧插入列', ArrowRightToLine, 'addColumnAfter'),
-      ] }, {key: 'table-cells', items: [
-        { ...command('合并单元格', Combine, 'mergeCells'), disabled: !editor.can().mergeCells() },
-        { ...command('拆分单元格', Split, 'splitCell'), disabled: !editor.can().splitCell() },
-        command('切换首行表头', PanelTop, 'toggleHeaderRow'),
-      ] }, {key: 'table-delete', items: [
-        command('删除当前行', Rows2, 'deleteRow'), command('删除当前列', Columns2, 'deleteColumn'),
-        { ...command('删除表格', Trash2, 'deleteTable'), danger: true },
+      ...(menu?.kind === 'table' ? [
+        ...(cellActions.length ? [{key: 'table-cells', items: cellActions}] : []),
+        {key: 'table-axes', layout: 'is-inline', columns: 4, items: [
+          command('上方插入行', ArrowUpToLine, 'addRowBefore'), command('下方插入行', ArrowDownToLine, 'addRowAfter'),
+          command('左侧插入列', ArrowLeftToLine, 'addColumnBefore'), command('右侧插入列', ArrowRightToLine, 'addColumnAfter'),
+        ]},
+        {key: 'table-delete', layout: 'is-inline', columns: 3, separator: false, items: [
+          { ...command('删除当前行', Rows2, 'deleteRow'), danger: true },
+          { ...command('删除当前列', Columns2, 'deleteColumn'), danger: true },
+          { ...command('删除表格', Trash2, 'deleteTable'), danger: true },
       ] }] : [
         { key: 'blocks', submenu: true, items: blockActions },
         { key: 'formats', layout: 'is-inline', columns: 5, separator: false, items: [formatActions[4], ...formatActions.slice(0, 4)] },
@@ -403,17 +489,38 @@ export default function PrdEditor({ value = '', onChange, readOnly = false, anno
     event.preventDefault();
     if (!editor) return;
     const keyboard = event.type === 'keydown' || (!event.clientX && !event.clientY);
-    if (event.type === 'contextmenu' && !keyboard && editor.state.selection.empty) {
+    const fromToolbar = !!event.currentTarget.closest('.uxw-prd-toolbar');
+    const imageTarget = event.target.closest('.uxw-prd-image, [data-prd-image]');
+    if (!fromToolbar && !keyboard && imageTarget) {
+      editor.commands.setNodeSelection(editor.view.posAtDOM(imageTarget, 0));
+    } else if (event.type === 'contextmenu' && !keyboard) {
       const at = editor.view.posAtCoords({ left: event.clientX, top: event.clientY });
-      if (at) editor.commands.setTextSelection(at.pos);
+      const selection = editor.state.selection;
+      let insideSelection = false;
+      if (selection instanceof CellSelection) {
+        const cell = event.target.closest('td,th');
+        selection.forEachCell((_node, pos) => { if (editor.view.nodeDOM(pos) === cell) insideSelection = true; });
+      } else if (at && !selection.empty) {
+        insideSelection = at.pos >= selection.from && at.pos <= selection.to;
+      }
+      // Keep a right-click inside a selection intact; elsewhere, act on the
+      // clicked cell/paragraph instead of a stale selection in another table.
+      if (at && !insideSelection) editor.commands.setTextSelection(at.pos);
     }
+    const selection = editor.state.selection;
+    const selectedText = selection instanceof TextSelection && !selection.empty;
+    const imageSelection = selection instanceof NodeSelection && selection.node.type.name === 'image';
+    const kind = !fromToolbar && imageSelection ? 'image' : !fromToolbar && editor.isActive('table') && !selectedText ? 'table' : 'text';
     const rect = event.currentTarget.getBoundingClientRect();
     // A pointer context menu belongs to the editing surface even if the host
     // delivers its focus event after contextmenu. The previously focused app
     // button is not the menu's owner or its focus-restoration target.
-    const origin = event.type === 'contextmenu' ? editor.view.dom : document.activeElement;
+    const origin = fromToolbar ? event.currentTarget : editor.view.dom;
     const pendingRightPress = event.type === 'contextmenu' && event.button === 2 && rightPress.current?.down ? rightPress.current : null;
-    setMenu({ x: keyboard ? rect.left + 16 : event.clientX, y: keyboard ? rect.top + 28 : event.clientY, keyboard, origin, rightPress: pendingRightPress });
+    setMenu({ x: keyboard ? rect.left + 16 : event.clientX, y: keyboard ? rect.top + 28 : event.clientY,
+      kind, label: kind === 'image' ? '图片操作菜单' : kind === 'table' ? '表格操作菜单' : '文本格式菜单', source: fromToolbar ? 'toolbar' : 'context',
+      image: imageSelection ? {pos:selection.from, attrs:selection.node.attrs, doc:editor.state.doc} : null,
+      keyboard, origin, rightPress: pendingRightPress });
   };
   const changeMode = next => {
     if (pendingImages.current > 0) return;
@@ -504,7 +611,7 @@ export default function PrdEditor({ value = '', onChange, readOnly = false, anno
           }} />
         {iconButton({ label: '撤销 PRD 编辑', icon: Undo2, disabled: !editor.can().undo(), run: () => run('undo') })}
         {iconButton({ label: '重做 PRD 编辑', icon: Redo2, disabled: !editor.can().redo(), run: () => run('redo') })}
-        <Tooltip label="更多文本格式"><button type="button" aria-label="更多文本格式" aria-haspopup="menu" aria-expanded={!!menu}
+        <Tooltip label="更多文本格式"><button type="button" aria-label="更多文本格式" aria-haspopup="menu" aria-expanded={menu?.source === 'toolbar'}
           onMouseDown={event => event.preventDefault()} onClick={openMenu} onKeyDown={event => { if (event.key === 'ArrowDown') openMenu(event); }}><MoreHorizontal size={16} aria-hidden="true" /></button></Tooltip>
         <span role="separator" aria-orientation="vertical" />
         </>}
@@ -515,17 +622,27 @@ export default function PrdEditor({ value = '', onChange, readOnly = false, anno
         </button></Tooltip>
       </div>
     </div>}
+    <div className="uxw-prd-editor-scroll">
     {mode === 'markdown' && !readOnly && <textarea ref={source} className="uxw-prd-source" aria-label="PRD 正文" spellCheck={false}
       value={value} onSelect={event => { sourceCursor.current = event.currentTarget.selectionStart; }}
       onChange={event => { current.current = event.target.value; sourceCursor.current = event.target.selectionStart; onChange?.(event.target.value); }} />}
     <div className="uxw-prd-editor-body" hidden={mode === 'markdown' && !readOnly}
-      onPointerDownCapture={event => {if(event.button === 2) rightPress.current = {down: true};}}
+      onPointerDownCapture={event => {
+        if (event.button !== 2 || !editor) return;
+        rightPress.current = {down: true};
+        // Keep the browser's native text selection from replacing a selected
+        // cell rectangle after right-button release.
+        if (editor.state.selection instanceof CellSelection && event.target.closest('.selectedCell')) event.preventDefault();
+      }}
       onContextMenu={openMenu} onKeyDown={event => {
         if ((event.shiftKey && event.key === 'F10') || event.key === 'ContextMenu') openMenu(event);
       }}><PrdReferenceContext.Provider value={referenceContext}><EditorContent editor={editor} /></PrdReferenceContext.Provider></div>
     <input ref={imageInput} type="file" accept="image/png,image/jpeg,image/gif,image/webp,image/avif,image/bmp" multiple hidden
       onChange={event => { const files = [...event.target.files]; event.target.value = ''; if (files.length) void insertImages(files); }} />
     <div className="uxw-prd-status" role="status">{status}</div>
+    </div>
+    <PrdTableHandles editor={editor} enabled={!!editor && mode === 'rich' && !readOnly} menu={menu} onOpenMenu={setMenu} onCloseMenu={closeMenu} />
     <EditorMenu state={menu} groups={groups} onClose={closeMenu} restoreFocus={restoreFocus} />
+    {imagePreview && <ImagePreview image={imagePreview} onClose={() => setImagePreview(null)} />}
   </div>;
 }

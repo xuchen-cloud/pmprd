@@ -82,6 +82,36 @@ test('workspace containment rejects traversal and escaping symlinks', async t =>
   await assert.rejects(f.service.read({ ...f.args, path: 'escape/secret.html' }), /工作目录/);
 });
 
+test('metadata-only changes do not invalidate saves or submissions while writes retain filesystem guards', async t => {
+  const f = await fixture(t), adapter = f.dependencies.fs, originalStat = adapter.stat;
+  let metadata = 1;
+  adapter.stat = async target => {
+    const stat = await originalStat.call(adapter, target);
+    return stat && {...stat, version: `${metadata}:${stat.version}`};
+  };
+  const snapshot = await f.service.read(f.args), before = parse(snapshot.html);
+  metadata++;
+  const changed = recordHuman(before, {...before, prd: before.prd + '\n图片说明'});
+  const saved = await f.service.save({...f.args, expectedVersion: snapshot.version, html: write(snapshot.html, changed)});
+  assert.equal(saved.version, sha256(saved.html));
+  assert.ok(f.writes.at(-1).expected.version.startsWith('2:'));
+  metadata++;
+  await f.service.submit({...f.args, expectedVersion:saved.version, selectedIds:[f.request.id], includePrdChanges:false, clearResolved:false, destination:'external'});
+  assert.equal(f.messages.length, 0);
+});
+
+test('a filesystem change between save validation and write still rejects replacement', async t => {
+  const f = await fixture(t), snapshot = await f.service.read(f.args), adapter = f.dependencies.fs;
+  const originalWrite = adapter.writeText;
+  adapter.writeText = async function(target, ...args) {
+    if (target.targetKey === f.file) await fs.appendFile(f.file, '\n<!-- external change -->');
+    return originalWrite.call(this, target, ...args);
+  };
+  const before = parse(snapshot.html), changed = recordHuman(before, {...before, prd:'新增图片'});
+  await assert.rejects(f.service.save({...f.args, expectedVersion:snapshot.version, html:write(snapshot.html,changed)}), /FS_STALE_VERSION/);
+  assert.ok((await fs.readFile(f.file,'utf8')).endsWith('<!-- external change -->'));
+});
+
 test('submission snapshots source, persists manifest, rejects explanations, and deduplicates', async t => {
   const f = await fixture(t), { manifest, result } = await f.submit();
   assert.equal(f.messages.length, 1);

@@ -2,7 +2,6 @@ import { Extension, Node, mergeAttributes } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
 import { Markdown } from '@tiptap/markdown';
 import { TableKit } from '@tiptap/extension-table';
-import Image from '@tiptap/extension-image';
 import Highlight from '@tiptap/extension-highlight';
 import TaskList from '@tiptap/extension-task-list';
 import TaskItem from '@tiptap/extension-task-item';
@@ -11,6 +10,7 @@ import DOMPurify from 'dompurify';
 import { DOMSerializer } from '@tiptap/pm/model';
 import { PrdAnnotationReference } from './PrdReferenceNode.jsx';
 import { tokenizePrdReferences } from './prd-references.mjs';
+import { EmbeddedImage } from './PrdImage.mjs';
 
 const blockTypes = ['paragraph', 'heading', 'blockquote', 'bulletList', 'orderedList', 'taskList', 'codeBlock', 'horizontalRule', 'table', 'image', 'prdRaw', 'annotationReference'];
 const sourceAttribute = Extension.create({
@@ -52,23 +52,13 @@ const RawMarkdown = Node.create({
 
 // <mark> is portable in the existing marked-based reader; ==text== is not GFM.
 const PortableHighlight = Highlight.extend({ renderMarkdown: (node, h) => `<mark>${h.renderChildren(node)}</mark>` });
-const EmbeddedImage = Image.extend({
-  renderHTML({ HTMLAttributes }) {
-    const attributes = { ...HTMLAttributes, alt: HTMLAttributes.alt || '' };
-    // Existing remote image syntax is retained in source but is not fetched.
-    if (!/^data:image\/(?:png|jpeg|jpg|gif|webp|avif|bmp);base64,/i.test(attributes.src || '')) {
-      return ['span', { class: 'uxw-prd-image-placeholder', 'data-prd-image': '' }, attributes.alt || '图片链接（原文保留）'];
-    }
-    return ['img', attributes];
-  },
-});
 
-export function prdExtensions() {
+export function prdExtensions({ getAssets = () => ({}) } = {}) {
   return [
     StarterKit.configure({ heading: false, link: { openOnClick: false, autolink: true }, underline: false, trailingNode: false }),
     PrdHeading.configure({ levels: [1, 2, 3, 4, 5, 6] }),
     TableKit.configure({ table: { resizable: true, cellMinWidth: 48 }, tableHeader: { HTMLAttributes: { scope: 'col' } } }),
-    EmbeddedImage.configure({ allowBase64: true }), PortableHighlight,
+    EmbeddedImage.configure({ allowBase64: true, getAssets }), PortableHighlight,
     TaskList, TaskItem.configure({ nested: true }), sourceAttribute, RawMarkdown, PrdAnnotationReference, Markdown,
   ];
 }
@@ -85,6 +75,8 @@ function fingerprint(node) {
 function supportedToken(token) {
   if (token.type === 'def') return false;
   if (token.type === 'html') {
+    // Sized images use standard HTML because Markdown has no size attributes.
+    if (/^\s*<img\b[^>]*>\s*$/i.test(token.raw)) return !/\b(?:on\w+|style|class|data-[\w-]+)\s*=/i.test(token.raw);
     // Safe standard table markup, generated for merged/multiline cells, stays editable.
     if (!/^\s*<table[\s>]/i.test(token.raw)) return false;
     return !/<\/?(?!table\b|thead\b|tbody\b|tfoot\b|tr\b|td\b|th\b|colgroup\b|col\b|p\b|strong\b|b\b|em\b|i\b|s\b|code\b|mark\b|br\b|ul\b|ol\b|li\b|a\b|img\b)[a-z]/i.test(token.raw) && !/\bon\w+\s*=|<script\b/i.test(token.raw);

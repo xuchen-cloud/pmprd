@@ -89,6 +89,22 @@ async function clickInPrototype(page, selector, button = 'left') {
   await page.mouse.click(box.x + point.x * scale, box.y + point.y * scale, { button });
 }
 
+test('uploaded image resources survive workbench save and reopen without entering PRD or history', async t => {
+  const {page}=await openPage(t);
+  const image=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jwXcAAAAASUVORK5CYII=','base64');
+  await page.locator('.ProseMirror > p').first().click();
+  await page.locator('input[type=file]').setInputFiles({name:'配图.png',mimeType:'image/png',buffer:image});
+  await page.locator('.ProseMirror img').waitFor();
+  await page.getByRole('button',{name:'保存文档',exact:true}).click();
+  await page.waitForFunction(()=>window.__saves.length===1);
+  const saved=parse(await page.evaluate(()=>window.__saves[0].html));
+  assert.ok(saved.prd.includes('asset:img-'));assert.ok(!saved.prd.includes('base64'));
+  assert.equal(Object.keys(saved.assets).length,1);assert.ok(!JSON.stringify(saved.changes).includes('base64'));
+  await page.reload();await page.waitForFunction(()=>document.querySelector('.ProseMirror img')?.naturalWidth===1);
+  await page.getByRole('button',{name:'Markdown',exact:true}).click();
+  assert.equal(await page.getByRole('textbox',{name:'PRD 正文',exact:true}).inputValue(),saved.prd);
+});
+
 test('collapsed PRD reopens from the far right without losing prototype input', async t => {
   const { page } = await openPage(t);
   await frame(page).locator('#draft').fill('保留业务草稿');
